@@ -1,3 +1,4 @@
+import React from 'react';
 import { Loader2 } from 'lucide-react';
 
 interface OutputPanelProps {
@@ -15,30 +16,27 @@ export default function OutputPanel({
   onInputChange,
   isExecuting
 }: OutputPanelProps) {
+  const showPlaceholder = !isExecuting && !output && !error;
+
   return (
     <div className="h-full flex flex-col bg-gray-900 text-white">
-
+      
       {/* Output Section */}
       <div className="flex-1 px-4 pt-4 overflow-hidden">
         <h2 className="text-lg font-semibold mb-2">Output</h2>
-
-        <div className="bg-gray-800 rounded-lg border border-gray-700 relative">
-
-          {/* Loader Overlay */}
+        <div className="h-full bg-gray-800 rounded-lg relative border border-gray-700">
           {isExecuting && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-90 rounded-lg z-10">
               <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
             </div>
           )}
-
-          {/* Output Area */}
-          <div className="h-96 overflow-auto p-4 rounded-lg">
-            {error ? (
+          <div className="h-full max-h-[300px] overflow-auto p-4 rounded-lg">
+            {showPlaceholder ? (
+              <p className="text-gray-500 italic">Run code to see output here...</p>
+            ) : error ? (
               <pre className="text-red-400 whitespace-pre-wrap">{error}</pre>
-            ) : output ? (
-              <pre className="text-green-400 whitespace-pre-wrap">{output}</pre>
             ) : (
-              <p className="text-gray-400 italic">Run the code and see the output here...</p>
+              <pre className="text-green-400 whitespace-pre-wrap">{output}</pre>
             )}
           </div>
         </div>
