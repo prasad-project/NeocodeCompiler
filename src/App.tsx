@@ -1,49 +1,26 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import CodeEditor from './components/CodeEditor';
 import OutputPanel from './components/OutputPanel';
 import { Code2 } from 'lucide-react';
-import { PistonResponse } from './types';
+import { executeCode } from './services/codeExecution';
 
-function App() {
+export default function App() {
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | undefined>();
   const [customInput, setCustomInput] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
 
-  const executeCode = async (code: string, language: string, version: string, input: string) => {
+  const handleExecute = async (code: string, language: string, version: string, input: string) => {
     setIsExecuting(true);
     setError(undefined);
     setOutput('');
 
     try {
-      const response = await fetch('https://emkc.org/api/v2/piston/execute', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          language,
-          version,
-          files: [
-            {
-              name: `main.${language}`,
-              content: code,
-            },
-          ],
-          stdin: input,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result: PistonResponse = await response.json();
-
-      if (result.run.stderr) {
-        setError(result.run.stderr);
+      const result = await executeCode(code, language, version, input);
+      if (result.error) {
+        setError(result.error);
       } else {
-        setOutput(result.run.output);
+        setOutput(result.output);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred while executing the code');
@@ -53,20 +30,29 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
-      <header className="bg-gray-800 p-4 shadow-lg">
-        <div className="container mx-auto flex items-center gap-2">
-          <Code2 className="w-8 h-8 text-green-500" />
-          <h1 className="text-2xl font-bold text-white">Neo Compiler</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col font-sans">
+      {/* Header */}
+      <header className="backdrop-blur-sm bg-gray-800/60 border-b border-gray-700 shadow-sm px-6 py-4 sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto flex items-center gap-3">
+          <Code2 className="w-7 h-7 text-green-400" />
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">NeoCompiler</h1>
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto p-4">
-        <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-8rem)]">
-          <div className="flex-1 h-[50vh] lg:h-full bg-gray-800 rounded-lg overflow-hidden shadow-xl">
-            <CodeEditor onExecute={executeCode} isExecuting={isExecuting} />
+      {/* Main Content */}
+      <main className="flex-1 max-w-7xl mx-auto w-full p-4">
+        <div className="grid lg:grid-cols-2 gap-6 h-[calc(100vh-7.5rem)]">
+          {/* Code Editor */}
+          <div className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <CodeEditor 
+              onExecute={handleExecute} 
+              isExecuting={isExecuting}
+              customInput={customInput}
+            />
           </div>
-          <div className="flex-1 h-[50vh] lg:h-full bg-gray-800 rounded-lg overflow-hidden shadow-xl">
+
+          {/* Output Panel */}
+          <div className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-xl">
             <OutputPanel
               output={output}
               error={error}
@@ -80,5 +66,4 @@ function App() {
     </div>
   );
 }
-
-export default App;
+ 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import CustomInput from './CustomInput';
 
 interface OutputPanelProps {
   output: string;
@@ -14,25 +15,29 @@ export default function OutputPanel({
   error,
   customInput,
   onInputChange,
-  isExecuting
+  isExecuting,
 }: OutputPanelProps) {
   const showPlaceholder = !isExecuting && !output && !error;
 
   return (
-    <div className="h-full flex flex-col bg-gray-900 text-white">
-      
-      {/* Output Section */}
-      <div className="flex-1 px-4 pt-4 overflow-hidden">
+    <div className="h-full flex flex-col bg-gray-900 text-white rounded-xl overflow-hidden">
+      {/* Output Header */}
+      <div className="px-4 pt-4">
         <h2 className="text-lg font-semibold mb-2">Output</h2>
-        <div className="h-full bg-gray-800 rounded-lg relative border border-gray-700">
+      </div>
+
+      {/* Output Box */}
+      <div className="flex-1 px-4 pb-4">
+        <div className="relative h-full bg-gray-800/60 rounded-xl border border-gray-700 backdrop-blur-sm shadow-inner">
           {isExecuting && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-90 rounded-lg z-10">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10 rounded-xl">
               <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
             </div>
           )}
-          <div className="h-full max-h-[300px] overflow-auto p-4 rounded-lg">
+
+          <div className="h-full max-h-[300px] overflow-auto p-4 rounded-xl scroll-smooth">
             {showPlaceholder ? (
-              <p className="text-gray-500 italic">Run code to see output here...</p>
+              <p className="text-gray-400 italic">Run code to see output here...</p>
             ) : error ? (
               <pre className="text-red-400 whitespace-pre-wrap">{error}</pre>
             ) : (
@@ -42,16 +47,8 @@ export default function OutputPanel({
         </div>
       </div>
 
-      {/* Custom Input Section */}
-      <div className="px-4 pb-4 pt-2">
-        <h2 className="text-base font-semibold mb-2">Custom Input</h2>
-        <textarea
-          value={customInput}
-          onChange={(e) => onInputChange(e.target.value)}
-          className="w-full h-20 p-2 bg-gray-800 text-white text-sm rounded-lg resize-none border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-          placeholder="Enter your input here..."
-        />
-      </div>
+      {/* Custom Input */}
+      <CustomInput value={customInput} onChange={onInputChange} />
     </div>
   );
 }
