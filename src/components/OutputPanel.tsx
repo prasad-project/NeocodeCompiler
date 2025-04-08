@@ -30,7 +30,7 @@ export default function OutputPanel({
       <div className="flex-1 px-4 pb-4">
         <div className="relative h-full bg-gray-800/60 rounded-xl border border-gray-700 backdrop-blur-sm shadow-inner">
           {isExecuting && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10 rounded-xl">
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-800/60 z-10 rounded-xl">
               <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
             </div>
           )}

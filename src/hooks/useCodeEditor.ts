@@ -1,92 +1,93 @@
-import { useState, useRef } from 'react';
-import { Language, EditorTheme } from '../types';
-import { SUPPORTED_LANGUAGES, DEFAULT_CODE, EDITOR_THEMES } from '../constants/editorConfig';
+import { useState, useEffect, useRef } from 'react';
+import { SUPPORTED_LANGUAGES, EDITOR_THEMES, DEFAULT_CODE } from '../constants/editorConfig';
 
-export function useCodeEditor() {
+export function useCodeEditor(onExecute?: (code: string) => void) {
     const editorRef = useRef<any>(null);
     const monacoRef = useRef<any>(null);
 
-    const [selectedLanguage, setSelectedLanguage] = useState<Language>(() => {
+    // 🔁 Load selected language from localStorage or default to Java
+    const [selectedLanguage, setSelectedLanguage] = useState(() => {
         const savedLangId = localStorage.getItem('selected-language');
-        const foundLang = SUPPORTED_LANGUAGES.find(lang => lang.id === savedLangId);
-        return foundLang || SUPPORTED_LANGUAGES.find(lang => lang.id === 'java')!;
+        const lang = SUPPORTED_LANGUAGES.find((lang) => lang.id === savedLangId);
+        return lang || SUPPORTED_LANGUAGES[0];
     });
 
-    const [selectedTheme, setSelectedTheme] = useState<EditorTheme>(() => {
-        const savedTheme = localStorage.getItem('editor-theme');
-        return EDITOR_THEMES.find(t => t.id === savedTheme) || EDITOR_THEMES[0];
+    const [selectedTheme, setSelectedTheme] = useState(() => {
+        const savedThemeId = localStorage.getItem('editor-theme');
+        return EDITOR_THEMES.find((t) => t.id === savedThemeId) || EDITOR_THEMES[0];
     });
 
     const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
 
-    const handleEditorDidMount = (editor: any, monaco: any) => {
-        editorRef.current = editor;
-        monacoRef.current = monaco;
-
-        const savedCode = localStorage.getItem(`code-${selectedLanguage.id}`);
-        editor.setValue(savedCode || DEFAULT_CODE[selectedLanguage.id]);
-
-        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-            handleExecute();
-        });
-
-        editor.addCommand(
-            monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF,
-            () => {
-                editor.getAction("editor.action.formatDocument")?.run();
-            }
-        );
-    };
-
     const handleLanguageChange = (langId: string) => {
-        const newLang = SUPPORTED_LANGUAGES.find(lang => lang.id === langId) || SUPPORTED_LANGUAGES[0];
-        setSelectedLanguage(newLang);
-        localStorage.setItem('selected-language', newLang.id);
+        const newLang = SUPPORTED_LANGUAGES.find((lang) => lang.id === langId);
+        if (!newLang) return;
 
-        const savedCode = localStorage.getItem(`code-${langId}`);
-        if (editorRef.current && monacoRef.current) {
-            const model = editorRef.current.getModel();
-            if (model) {
-                monacoRef.current.editor.setModelLanguage(model, newLang.id);
-            }
-            editorRef.current.setValue(savedCode || DEFAULT_CODE[langId]);
-        }
+        setSelectedLanguage(newLang);
+        localStorage.setItem('selected-language', newLang.id); // Save to localStorage
+
+        const savedCode = localStorage.getItem(`code-${newLang.id}`) || DEFAULT_CODE[newLang.id];
+        editorRef.current?.setValue(savedCode);
+        editorRef.current?.getModel()?.setLanguage(newLang.id);
     };
 
-    const handleThemeChange = (theme: EditorTheme) => {
+    const handleThemeChange = (theme: (typeof EDITOR_THEMES)[number]) => {
         setSelectedTheme(theme);
-        localStorage.setItem('editor-theme', theme.id);
+        localStorage.setItem('editor-theme', theme.id); // Save theme
+        monacoRef.current?.editor.setTheme(theme.theme);
         setIsThemeMenuOpen(false);
     };
 
     const handleResetCode = () => {
-        if (editorRef.current) {
-            editorRef.current.setValue(DEFAULT_CODE[selectedLanguage.id]);
-            localStorage.removeItem(`code-${selectedLanguage.id}`);
-        }
+        const defaultCode = DEFAULT_CODE[selectedLanguage.id] || '';
+        editorRef.current?.setValue(defaultCode);
+        localStorage.setItem(`code-${selectedLanguage.id}`, defaultCode);
     };
 
-    const getCurrentCode = () => {
+    const getCurrentCode = (): string => {
         return editorRef.current?.getValue() || '';
     };
 
-    const handleExecute = () => {
-        const currentCode = getCurrentCode();
-        if (!currentCode.trim()) {
-            alert('Cannot execute empty code.');
-            return;
-        }
-
-        try {
-            console.log(`Executing code in ${selectedLanguage.id}:\n`, currentCode);
-            // Placeholder for actual execution logic, e.g., sending code to a backend service
-        } catch (error) {
-            console.error('Error executing code:', error);
-        }
-    };
+    const handleEditorDidMount = (editorInstance: any, monaco: any) => {
+        editorRef.current = editorInstance;
+        monacoRef.current = monaco;
+      
+        const savedCode = localStorage.getItem(`code-${selectedLanguage.id}`);
+        editorInstance.setValue(savedCode || DEFAULT_CODE[selectedLanguage.id]);
+      
+        monaco.editor.setTheme(selectedTheme.theme);
+      
+        // Autosave functionality (debounced)
+        let saveTimeout: ReturnType<typeof setTimeout>;
+        editorInstance.onDidChangeModelContent(() => {
+          clearTimeout(saveTimeout);
+          saveTimeout = setTimeout(() => {
+            const code = editorInstance.getValue();
+            localStorage.setItem(`code-${selectedLanguage.id}`, code);
+          }, 200); // save 200ms after user stops typing
+        });
+      
+        // Run on Ctrl+Enter
+        editorInstance.addCommand(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+          () => {
+            const code = editorInstance.getValue();
+            if (code && onExecute) {
+              onExecute(code);
+            }
+          }
+        );
+      
+        // Format on Ctrl+Shift+F
+        editorInstance.addCommand(
+          monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF,
+          () => {
+            editorInstance.getAction('editor.action.formatDocument')?.run();
+          }
+        );
+      };      
 
     return {
-        editorRef,
         selectedLanguage,
         selectedTheme,
         isThemeMenuOpen,
@@ -95,10 +96,6 @@ export function useCodeEditor() {
         handleLanguageChange,
         handleThemeChange,
         handleResetCode,
-        getCurrentCode,
+        getCurrentCode
     };
-}
-
-function handleExecute() {
-    throw new Error('Function not implemented.');
 }

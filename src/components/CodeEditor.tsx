@@ -24,7 +24,9 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
     handleThemeChange,
     handleResetCode,
     getCurrentCode
-  } = useCodeEditor();
+  } = useCodeEditor(async (code: string) => {
+    await onExecute(code, selectedLanguage.id, selectedLanguage.version, customInput);
+  });
 
   const handleExecute = async () => {
     const code = getCurrentCode();
@@ -36,7 +38,9 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between p-4 bg-gray-800 border-b border-gray-700">
+      {/* Header bar */}
+      <div className="flex items-center justify-between p-4 bg-gray-900 border-b border-gray-700">
+        {/* Language Selector */}
         <div className="relative">
           <select
             value={selectedLanguage.id}
@@ -54,7 +58,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
 
         {/* Action Buttons */}
         <div className="flex gap-2 items-center">
-          {/* Reset Button */}
+          {/* Reset */}
           <button
             onClick={handleResetCode}
             className="p-2 rounded-full border border-gray-600 text-white hover:bg-gray-700 transition group"
@@ -63,7 +67,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
             <RotateCcw className="w-5 h-5 transition-transform group-hover:-rotate-180" />
           </button>
 
-          {/* Theme Switcher */}
+          {/* Theme Menu */}
           <div className="relative">
             <button
               onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
@@ -80,7 +84,8 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
                     <button
                       key={theme.id}
                       onClick={() => handleThemeChange(theme)}
-                      className={`flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors ${selectedTheme.id === theme.id ? 'bg-green-700 font-semibold' : ''}`}
+                      className={`flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors ${selectedTheme.id === theme.id ? 'bg-green-700 font-semibold' : ''
+                        }`}
                     >
                       <span className="inline-block w-3 h-3 rounded-full bg-white opacity-50"></span>
                       {theme.name}
@@ -95,11 +100,10 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
           <button
             onClick={handleExecute}
             disabled={isExecuting}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-              isExecuting
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isExecuting
                 ? 'bg-gray-600 text-white cursor-not-allowed'
                 : 'bg-green-600 hover:bg-green-700 text-white shadow'
-            }`}
+              }`}
           >
             {isExecuting ? (
               <>
@@ -116,7 +120,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
         </div>
       </div>
 
-      {/* Monaco Editor */}
+      {/* Editor */}
       <div className="flex-1 overflow-hidden rounded-b-xl">
         <Editor
           height="100%"
