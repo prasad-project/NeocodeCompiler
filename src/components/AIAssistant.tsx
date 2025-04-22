@@ -13,7 +13,7 @@ interface ChatMessage {
   formattedContent?: string;
 }
 
-export default function AIAssistant({ 
+export default function AIAssistant({
   isOpen,
   onClose,
   code,
@@ -28,7 +28,22 @@ export default function AIAssistant({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const latestMessageRef = useRef<HTMLDivElement>(null);
+  const latestMessageRef = useRef<HTMLDivElement | null>(null);
+  const lastMessageRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll to bottom when assistant is opened
+  useEffect(() => {
+    if (isOpen && chatHistory.length > 0) {
+      // Use setTimeout to ensure the chat is fully rendered before scrolling
+      setTimeout(() => {
+        if (lastMessageRef.current) {
+          lastMessageRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
+        } else if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, [isOpen, chatHistory.length]);
 
   useEffect(() => {
     // Focus the input when the assistant opens
@@ -53,10 +68,22 @@ export default function AIAssistant({
     }
   }, [chatHistory]);
 
-  // Function to format and clean up AI responses
+  // Helper function to handle setting multiple refs
+  const setMultipleRefs = (isLast: boolean, isAssistant: boolean, element: HTMLDivElement | null) => {
+    if (isLast) {
+      // Set the last message ref always for the last message
+      lastMessageRef.current = element;
+
+      // Set the latest assistant message ref only for assistant messages
+      if (isAssistant) {
+        latestMessageRef.current = element;
+      }
+    }
+  };
+
   const formatResponse = (text: string): string => {
     const original = text;
-    
+
     try {
       let formatted = text
         .replace(/^(#+)\s+(.+)$/gm, (_, hashes, title) => `${hashes} ${title}`)
@@ -67,11 +94,11 @@ export default function AIAssistant({
         .replace(/```([a-z]*)\n([\s\S]*?)```/g, (_, lang, codeContent) => {
           return `\`\`\`${lang}\n${codeContent.trim()}\n\`\`\``;
         });
-      
+
       if (formatted.includes('<strong>') && !formatted.includes('</strong>')) {
         return original;
       }
-      
+
       return formatted;
     } catch (e) {
       console.error("Error formatting AI response:", e);
@@ -82,7 +109,7 @@ export default function AIAssistant({
   const handleModeChange = (newMode: AIAssistanceMode) => {
     setMode(newMode);
     setError(null);
-    
+
     if (newMode === 'explain' && code) {
       handleExplainMode();
     } else if (newMode === 'complete' && code) {
@@ -92,11 +119,11 @@ export default function AIAssistant({
 
   const handlePromptSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!prompt.trim() && mode === 'chat') {
       return;
     }
-    
+
     // Add user message to chat history immediately
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -104,26 +131,26 @@ export default function AIAssistant({
       role: 'user',
       timestamp: new Date()
     };
-    
+
     setChatHistory(history => [...history, userMessage]);
-    
+
     // Clear input field
     setPrompt('');
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Get context from recent messages to provide to the AI
       const recentMessages = chatHistory.slice(-5).map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`).join('\n\n');
       const contextPrompt = recentMessages ? `${recentMessages}\n\nUser: ${prompt}` : prompt;
-      
+
       const result = await getAICodeAssistance({
         prompt: contextPrompt,
         code: code,
         language
       });
-      
+
       if (!result.success) {
         setError(result.error || 'Failed to get assistance');
       } else {
@@ -135,7 +162,7 @@ export default function AIAssistant({
           role: 'assistant',
           timestamp: new Date()
         };
-        
+
         setChatHistory(history => [...history, aiMessage]);
         setError(null);
       }
@@ -154,13 +181,13 @@ export default function AIAssistant({
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await explainCode({
         code: code,
         language
       });
-      
+
       if (!result.success) {
         setError(result.error || 'Failed to explain code');
       } else {
@@ -172,7 +199,7 @@ export default function AIAssistant({
           role: 'assistant',
           timestamp: new Date()
         };
-        
+
         setChatHistory(history => [...history, aiMessage]);
         setError(null);
       }
@@ -191,13 +218,13 @@ export default function AIAssistant({
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await getCodeCompletions({
         code: code,
         language
       });
-      
+
       if (!result.success) {
         setError(result.error || 'Failed to complete code');
       } else {
@@ -209,7 +236,7 @@ export default function AIAssistant({
           role: 'assistant',
           timestamp: new Date()
         };
-        
+
         setChatHistory(history => [...history, aiMessage]);
         setError(null);
       }
@@ -223,17 +250,17 @@ export default function AIAssistant({
   const extractCodeFromResponse = (text: string) => {
     const codeBlockRegex = /```(?:\w+)?\s*([\s\S]*?)```/g;
     const matches = [...text.matchAll(codeBlockRegex)];
-    
+
     if (matches.length > 0) {
       return matches[0][1].trim();
     }
-    
+
     return text;
   };
 
   const handleInsertSuggestion = (messageContent: string) => {
     if (!messageContent) return;
-    
+
     const codeToInsert = extractCodeFromResponse(messageContent);
     onInsertCode(codeToInsert);
     onClose();
@@ -241,14 +268,14 @@ export default function AIAssistant({
 
   const handleCopyResponse = (messageContent: string) => {
     if (!messageContent) return;
-    
+
     navigator.clipboard.writeText(messageContent)
       .then(() => {
         const tempMessage = document.createElement('div');
         tempMessage.className = 'fixed bottom-4 right-4 bg-purple-700 text-white px-4 py-2 rounded shadow-lg';
         tempMessage.textContent = 'Copied to clipboard!';
         document.body.appendChild(tempMessage);
-        
+
         setTimeout(() => {
           document.body.removeChild(tempMessage);
         }, 2000);
@@ -258,12 +285,12 @@ export default function AIAssistant({
 
   const createMarkup = (content: string) => {
     if (!content) return { __html: '' };
-    
+
     let htmlContent = content
       .replace(/```([\w]*)\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
       .replace(/`([^`]+)`/g, '<code>$1</code>')
       .replace(/\n/g, '<br />');
-    
+
     return { __html: htmlContent };
   };
 
@@ -305,7 +332,7 @@ export default function AIAssistant({
             >
               <Settings className="w-5 h-5" />
             </button>
-            <button 
+            <button
               onClick={onClose}
               className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-800 transition-colors"
               aria-label="Close"
@@ -314,65 +341,64 @@ export default function AIAssistant({
             </button>
           </div>
         </div>
-        
+
         <div className="flex border-b border-purple-800/30">
-          <button 
+          <button
             onClick={() => handleModeChange('chat')}
-            className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${
-              mode === 'chat' 
-                ? 'text-purple-400 border-b-2 border-purple-500' 
+            className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${mode === 'chat'
+                ? 'text-purple-400 border-b-2 border-purple-500'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <Sparkles className="w-4 h-4" />
             Chat
           </button>
-          <button 
+          <button
             onClick={() => handleModeChange('complete')}
-            className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${
-              mode === 'complete' 
-                ? 'text-purple-400 border-b-2 border-purple-500' 
+            className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${mode === 'complete'
+                ? 'text-purple-400 border-b-2 border-purple-500'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <Code className="w-4 h-4" />
             Complete
           </button>
-          <button 
+          <button
             onClick={() => handleModeChange('explain')}
-            className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${
-              mode === 'explain' 
-                ? 'text-purple-400 border-b-2 border-purple-500' 
+            className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${mode === 'explain'
+                ? 'text-purple-400 border-b-2 border-purple-500'
                 : 'text-gray-400 hover:text-white'
-            }`}
+              }`}
           >
             <Bot className="w-4 h-4" />
             Explain
           </button>
         </div>
-        
+
         <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-950/50">
           {/* Chat messages */}
           {chatHistory.length > 0 && (
             <div className="space-y-6 mb-6">
               {chatHistory.map((message, index) => (
-                <div 
-                  key={message.id} 
-                  // Add ref to the latest message when it's an assistant message
-                  ref={index === chatHistory.length - 1 && message.role === 'assistant' ? latestMessageRef : null}
+                <div
+                  key={message.id}
+                  ref={(element) => setMultipleRefs(
+                    index === chatHistory.length - 1,
+                    message.role === 'assistant',
+                    element
+                  )}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div 
-                    className={`${
-                      message.role === 'user' 
-                        ? 'max-w-[80%] bg-purple-600 text-white rounded-tr-none rounded-lg p-3' 
+                  <div
+                    className={`${message.role === 'user'
+                        ? 'max-w-[80%] bg-purple-600 text-white rounded-tr-none rounded-lg p-3'
                         : 'w-full bg-gray-800 text-white rounded-tl-none rounded-lg p-3'
-                    }`}
+                      }`}
                   >
                     {message.role === 'assistant' ? (
                       <>
                         <div className="prose prose-invert max-w-none">
-                          <div className="ai-response formatted-content" 
+                          <div className="ai-response formatted-content"
                             dangerouslySetInnerHTML={createMarkup(message.formattedContent || message.content)} />
                         </div>
                         <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-gray-700/30">
@@ -396,6 +422,8 @@ export default function AIAssistant({
                   </div>
                 </div>
               ))}
+              {/* Invisible element to ensure we can always scroll to the bottom */}
+              <div className="h-1 w-full" ref={lastMessageRef}></div>
             </div>
           )}
 
@@ -407,13 +435,13 @@ export default function AIAssistant({
               </div>
             </div>
           )}
-            
+
           {error && (
             <div className="bg-red-900/20 border border-red-700/50 rounded-lg p-4 mt-2">
               <p className="text-red-400">{error}</p>
             </div>
           )}
-            
+
           {chatHistory.length === 0 && !error && !isLoading && mode === 'chat' && (
             <div className="text-center text-gray-400 py-8">
               <Bot className="w-12 h-12 mx-auto text-gray-600 mb-4" />
@@ -424,7 +452,7 @@ export default function AIAssistant({
             </div>
           )}
         </div>
-        
+
         {/* Input area fixed at bottom */}
         {mode === 'chat' && (
           <div className="p-3 border-t border-purple-800/30 bg-gray-900">
@@ -454,7 +482,7 @@ export default function AIAssistant({
             <p className="text-gray-500 text-xs mt-1 text-center">Press Enter to send, Shift+Enter for new line</p>
           </div>
         )}
-        
+
         {!hasApiKey() && (
           <div className="bg-yellow-900/20 border-t border-yellow-700/50 px-4 py-3">
             <p className="text-yellow-300 text-sm">
@@ -462,7 +490,7 @@ export default function AIAssistant({
             </p>
           </div>
         )}
-        
+
         {mode !== 'chat' && (
           <div className="flex justify-between items-center px-4 py-3 border-t border-purple-800/30">
             {(mode === 'explain' || mode === 'complete') && chatHistory.length === 0 && !isLoading && (
