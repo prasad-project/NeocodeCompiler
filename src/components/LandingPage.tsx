@@ -123,19 +123,24 @@ function Features() {
     );
 }
 
+
 function Footer() {
     return (
-        <footer className="py-8 border-t border-purple-900/30 bg-gray-900/80">
-            <div className="max-w-6xl mx-auto px-4">
-                <div className="flex flex-col md:flex-row justify-between items-center">
-                    <div className="text-gray-400 mb-4 md:mb-0">
-                        <p className="mb-1">© {new Date().getFullYear()} NeoCompiler. All rights reserved.</p>
-                        <p className="text-sm text-gray-500">Crafted by Deepak Modi</p>
+        <footer className="py-5 border-t border-purple-900/40 bg-gray-900/90 backdrop-blur-sm">
+            <div className="max-w-6xl mx-auto px-6">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="text-gray-400">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Code2 className="w-5 h-5 text-purple-500" />
+                            <span className="font-medium text-gray-300">NeoCompiler</span>
+                        </div>
+                        <p className="text-sm text-gray-500">© {new Date().getFullYear()} NeoCompiler. All rights reserved.</p>
+                        <p className="text-sm text-gray-500">Developed by <a href="https://deepakmodi.vercel.app" className="text-purple-400 hover:text-purple-300 transition-colors">Deepak Modi</a></p>
                     </div>
                     <div>
                         <a
                             href="https://github.com/deepakmodi/neo-compiler"
-                            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+                            className="flex items-center gap-2 px-5 py-2.5 bg-gray-800/80 hover:bg-gray-700 border border-purple-900/30 hover:border-purple-500/50 rounded-lg transition-all shadow-sm hover:shadow-purple-900/20"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
@@ -150,6 +155,7 @@ function Footer() {
         </footer>
     );
 }
+
 
 export default function LandingPage() {
     return (
