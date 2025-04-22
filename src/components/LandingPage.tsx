@@ -71,18 +71,18 @@ function Hero() {
 
 function CodeSnippet() {
     return (
-        <div className="mt-12 md:mt-0 w-full md:w-auto md:flex-1 max-w-2xl">
+        <div className="w-full md:flex-1 max-w-2xl">
             <div className="bg-gray-800/70 rounded-xl border border-purple-900/50 shadow-lg overflow-hidden backdrop-blur-md">
-                <div className="bg-gray-800/80 px-4 py-2 border-b border-purple-900/30 flex items-center">
-                    <div className="flex space-x-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <div className="bg-gray-800/80 px-3 py-1.5 sm:px-4 sm:py-2 border-b border-purple-900/30 flex items-center">
+                    <div className="flex space-x-1.5 sm:space-x-2">
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
                     </div>
                     <div className="mx-auto text-xs text-gray-400">main.js</div>
                 </div>
-                <div className="p-4 overflow-x-auto font-mono text-sm leading-relaxed">
-                    <pre className="p-4 text-sm text-gray-300 font-mono overflow-hidden">
+                <div className="p-2 sm:p-4 overflow-x-auto font-mono text-xs sm:text-sm leading-relaxed">
+                    <pre className="text-gray-300 font-mono whitespace-pre-wrap break-words">
                         <code>
                             <span className="text-purple-400">function</span> <span className="text-blue-400">greet</span>(<span className="text-yellow-300">name</span>) {'{'}<br />
                             {'  '}<span className="text-purple-400">return</span> <span className="text-green-400">{"`Hello, ${name}! Welcome to NeoCompiler`"}</span>;<br />
@@ -93,9 +93,9 @@ function CodeSnippet() {
                         </code>
                     </pre>
                 </div>
-                <div className="bg-gray-900/80 border-t border-purple-900/30 p-4">
+                <div className="bg-gray-900/80 border-t border-purple-900/30 p-3 sm:p-4">
                     <p className="text-xs uppercase text-gray-500 mb-1">Output:</p>
-                    <pre className="text-sm text-purple-500 font-mono">
+                    <pre className="text-xs sm:text-sm text-purple-500 font-mono whitespace-pre-wrap break-words">
                         Output: Hello, Developer! Welcome to NeoCompiler
                     </pre>
                 </div>
