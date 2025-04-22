@@ -49,8 +49,8 @@ export const SUPPORTED_LANGUAGES: Language[] = [
 ];
 
 export const EDITOR_THEMES: EditorTheme[] = [
-    { id: 'vs-dark', name: 'VS Code Dark', theme: 'vs-dark' },
     { id: 'github-dark', name: 'GitHub Dark', theme: 'github-dark' },
+    { id: 'vs-dark', name: 'VS Code Dark', theme: 'vs-dark' },
     { id: 'monokai', name: 'Monokai Dark', theme: 'monokai' },
     { id: 'dracula', name: 'Dracula Dark', theme: 'dracula' },
     { id: 'nord', name: 'Nord Dark', theme: 'nord' },
