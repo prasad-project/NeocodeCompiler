@@ -1,5 +1,38 @@
 // Custom theme definitions for Monaco Editor
 export const defineMonacoThemes = (monaco: any) => {
+  // Neo Dark theme - Custom theme matching the landing page code snippet
+  monaco.editor.defineTheme('neo-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '6272a4' },      // bluish gray
+      { token: 'keyword', foreground: 'a78bfa' },      // purple-400
+      { token: 'string', foreground: '4ade80' },       // green-400
+      { token: 'number', foreground: 'fcd34d' },       // yellow-300
+      { token: 'operator', foreground: 'f472b6' },     // pink-400
+      { token: 'function', foreground: '60a5fa' },     // blue-400
+      { token: 'variable', foreground: 'fb923c' },     // orange-400
+      { token: 'type', foreground: '8b5cf6' },         // violet-500
+      { token: 'delimiter', foreground: 'e2e8f0' },    // slate-200
+      { token: 'regexp', foreground: 'f87171' },       // red-400
+      { token: 'tag', foreground: '2dd4bf' },          // teal-400
+    ],
+    colors: {
+      'editor.background': '#0f172a',                  // slate-900 (darker)
+      'editor.foreground': '#d1d5db',                  // gray-300
+      'editor.lineHighlightBackground': '#1e293b',     // slate-800
+      'editorCursor.foreground': '#a78bfa',            // purple-400
+      'editor.selectionBackground': '#312e81',         // indigo-900
+      'editorLineNumber.foreground': '#6b7280',        // gray-500
+      'editorLineNumber.activeForeground': '#a78bfa',  // purple-400
+      'editorIndentGuide.background': '#1e293b',       // slate-800
+      'editor.selectionHighlightBackground': '#374151', // gray-700
+      'editorSuggestWidget.background': '#0f172a',     // slate-900
+      'editorSuggestWidget.border': '#1e293b',         // slate-800
+      'editorSuggestWidget.selectedBackground': '#312e81', // indigo-900
+    }
+  });
+
   // GitHub Dark theme
   monaco.editor.defineTheme('github-dark', {
     base: 'vs-dark',
@@ -23,32 +56,6 @@ export const defineMonacoThemes = (monaco: any) => {
       'editorLineNumber.foreground': '#6e7681',
       'editorLineNumber.activeForeground': '#c9d1d9',
       'editorIndentGuide.background': '#21262d',
-    }
-  });
-  
-  // Monokai Dark theme
-  monaco.editor.defineTheme('monokai', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [
-      { token: 'comment', foreground: '88846f' },
-      { token: 'keyword', foreground: 'f92672' },
-      { token: 'string', foreground: 'e6db74' },
-      { token: 'number', foreground: 'ae81ff' },
-      { token: 'operator', foreground: 'f8f8f2' },
-      { token: 'function', foreground: '66d9ef', fontStyle: 'italic' },
-      { token: 'variable', foreground: 'fd971f' },
-      { token: 'type', foreground: 'a6e22e' },
-    ],
-    colors: {
-      'editor.background': '#272822',
-      'editor.foreground': '#f8f8f2',
-      'editor.lineHighlightBackground': '#3e3d32',
-      'editorCursor.foreground': '#f8f8f2',
-      'editor.selectionBackground': '#49483e',
-      'editorLineNumber.foreground': '#90908a',
-      'editorLineNumber.activeForeground': '#f8f8f2',
-      'editorIndentGuide.background': '#3b3a32',
     }
   });
 
@@ -76,59 +83,7 @@ export const defineMonacoThemes = (monaco: any) => {
       'editorLineNumber.activeForeground': '#f8f8f2',
       'editorIndentGuide.background': '#424450',
     }
-  });
-
-  // Nord Dark theme
-  monaco.editor.defineTheme('nord', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [
-      { token: 'comment', foreground: '616e88' },
-      { token: 'keyword', foreground: '81a1c1' },
-      { token: 'string', foreground: 'a3be8c' },
-      { token: 'number', foreground: 'b48ead' },
-      { token: 'operator', foreground: 'eceff4' },
-      { token: 'function', foreground: '88c0d0' },
-      { token: 'variable', foreground: 'd8dee9' },
-      { token: 'type', foreground: '8fbcbb' },
-    ],
-    colors: {
-      'editor.background': '#2e3440',
-      'editor.foreground': '#d8dee9',
-      'editor.lineHighlightBackground': '#3b4252',
-      'editorCursor.foreground': '#d8dee9',
-      'editor.selectionBackground': '#434c5e',
-      'editorLineNumber.foreground': '#4c566a',
-      'editorLineNumber.activeForeground': '#d8dee9',
-      'editorIndentGuide.background': '#434c5e',
-    }
-  });
-
-  // One Dark Pro theme
-  monaco.editor.defineTheme('one-dark-pro', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [
-      { token: 'comment', foreground: '5c6370' },
-      { token: 'keyword', foreground: 'c678dd' },
-      { token: 'string', foreground: '98c379' },
-      { token: 'number', foreground: 'd19a66' },
-      { token: 'operator', foreground: 'abb2bf' },
-      { token: 'function', foreground: '61afef' },
-      { token: 'variable', foreground: 'e06c75' },
-      { token: 'type', foreground: '56b6c2' },
-    ],
-    colors: {
-      'editor.background': '#282c34',
-      'editor.foreground': '#abb2bf',
-      'editor.lineHighlightBackground': '#2c313c',
-      'editorCursor.foreground': '#abb2bf',
-      'editor.selectionBackground': '#3e4451',
-      'editorLineNumber.foreground': '636d83',
-      'editorLineNumber.activeForeground': '#abb2bf',
-      'editorIndentGuide.background': '#3b4048',
-    }
-  });
+  })
 
   // Night Owl theme
   monaco.editor.defineTheme('night-owl', {
@@ -156,29 +111,4 @@ export const defineMonacoThemes = (monaco: any) => {
     }
   });
 
-  // GitHub Light theme
-  monaco.editor.defineTheme('github-light', {
-    base: 'vs',
-    inherit: true,
-    rules: [
-      { token: 'comment', foreground: '6a737d' },
-      { token: 'keyword', foreground: 'd73a49' },
-      { token: 'string', foreground: '032f62' },
-      { token: 'number', foreground: '005cc5' },
-      { token: 'operator', foreground: '005cc5' },
-      { token: 'function', foreground: '6f42c1' },
-      { token: 'variable', foreground: 'e36209' },
-      { token: 'type', foreground: '005cc5' },
-    ],
-    colors: {
-      'editor.background': '#ffffff',
-      'editor.foreground': '#24292e',
-      'editor.lineHighlightBackground': '#f1f8ff',
-      'editorCursor.foreground': '#24292e',
-      'editor.selectionBackground': '#c8c8fa',
-      'editorLineNumber.foreground': '#1b1f234d',
-      'editorLineNumber.activeForeground': '#24292e',
-      'editorIndentGuide.background': '#eeeeee',
-    }
-  });
 };

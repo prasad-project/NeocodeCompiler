@@ -51,7 +51,7 @@ export default function Compiler() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full p-4">
+      <main className="flex-1 mx-auto w-full p-4 sm:p-8">
         <div className="grid lg:grid-cols-2 gap-6 h-[calc(100vh-7.5rem)]">
           {/* Code Editor */}
           <div className="bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">

@@ -41,7 +41,7 @@ export default function OutputPanel({
             ) : error ? (
               <pre className="text-red-400 whitespace-pre-wrap">{error}</pre>
             ) : (
-              <pre className="text-purple-300 whitespace-pre-wrap">{output}</pre>
+              <pre className="text-purple-400 whitespace-pre-wrap">{output}</pre>
             )}
           </div>
         </div>
