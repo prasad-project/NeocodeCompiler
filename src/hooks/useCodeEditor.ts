@@ -1,7 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { SUPPORTED_LANGUAGES, EDITOR_THEMES, DEFAULT_CODE } from '../constants/editorConfig';
 
-export function useCodeEditor(onExecute?: (code: string) => void, externalLanguageId?: string) {
+// Add type declaration for window
+declare global {
+    interface Window {
+        __MONACO_EDITOR__: any;
+    }
+}
+
+export function useCodeEditor(
+    onExecute?: (code: string) => void, 
+    externalLanguageId?: string,
+    onEditorMount?: (editor: any) => void // Add new parameter to pass editor instance to parent
+) {
     const editorRef = useRef<any>(null);
     const monacoRef = useRef<any>(null);
 
@@ -104,10 +115,21 @@ export function useCodeEditor(onExecute?: (code: string) => void, externalLangua
     const handleEditorDidMount = (editorInstance: any, monaco: any) => {
         editorRef.current = editorInstance;
         monacoRef.current = monaco;
+
+        // Expose editor instance globally for AI assistant to access
+        window.__MONACO_EDITOR__ = editorInstance;
+        
+        // Pass editor instance to parent component if callback is provided
+        if (onEditorMount) {
+            onEditorMount(editorInstance);
+        }
       
-        // Always use default code for selected language
+        // Try to load saved code for the current language
+        const savedCode = localStorage.getItem(`code-${selectedLanguage.id}`);
         const defaultCode = DEFAULT_CODE[selectedLanguage.id] || '';
-        editorInstance.setValue(defaultCode);
+        
+        // Use saved code if available, otherwise use default code
+        editorInstance.setValue(savedCode || defaultCode);
       
         // Use the theme ID instead of theme.theme to apply our custom themes
         monaco.editor.setTheme(selectedTheme.id);

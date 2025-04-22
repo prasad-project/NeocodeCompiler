@@ -3,6 +3,7 @@ import { Code2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CodeEditor from './CodeEditor';
 import OutputPanel from './OutputPanel';
+import AIFloatingButton from './AIFloatingButton';
 import { executeCode } from '../services/codeExecution';
 import { SUPPORTED_LANGUAGES } from '../constants/editorConfig';
 
@@ -22,6 +23,8 @@ export default function Compiler() {
     const savedLangId = localStorage.getItem('selected-language');
     return savedLangId || SUPPORTED_LANGUAGES[0].id;
   });
+
+  const [editorInstance, setEditorInstance] = useState<any>(null);
 
   const handleExecute = async (code: string, language: string, version: string, input: string) => {
     setIsExecuting(true);
@@ -47,7 +50,6 @@ export default function Compiler() {
     localStorage.setItem('selected-language', langId);
   };
 
-  // Language icon map with react-icons
   const languageIcons: Record<string, { icon: JSX.Element }> = {
     java: { icon: <FaJava size={30} /> },
     cpp: { icon: <TbBrandCpp size={30} /> },
@@ -58,6 +60,43 @@ export default function Compiler() {
     go: { icon: <FaGolang size={30} /> },
     rust: { icon: <FaRust size={30} /> },
     ruby: { icon: <DiRuby size={30} /> }
+  };
+
+  const getCurrentCode = () => {
+    if (editorInstance) {
+      return editorInstance.getValue();
+    }
+    return '';
+  };
+
+  const handleInsertAICode = (code: string) => {
+    if (!editorInstance) return;
+
+    const selection = editorInstance.getSelection();
+    if (selection) {
+      editorInstance.executeEdits('ai-assistant', [{
+        range: selection,
+        text: code,
+        forceMoveMarkers: true
+      }]);
+    } else {
+      const model = editorInstance.getModel();
+      if (model) {
+        const lastLineNumber = model.getLineCount();
+        const lastLineLength = model.getLineLength(lastLineNumber);
+        const position = { lineNumber: lastLineNumber, column: lastLineLength + 1 };
+        editorInstance.setPosition(position);
+        editorInstance.trigger('ai-assistant', 'type', { text: '\n\n' + code });
+      }
+    }
+  };
+
+  const getCurrentLanguage = () => {
+    const lang = SUPPORTED_LANGUAGES.find(lang => lang.id === selectedLanguageId);
+    return {
+      id: lang?.id || 'typescript',
+      name: lang?.name || 'TypeScript'
+    };
   };
 
   return (
@@ -142,6 +181,7 @@ export default function Compiler() {
                 isExecuting={isExecuting}
                 customInput={customInput}
                 selectedLanguageId={selectedLanguageId}
+                onEditorMount={(editor) => setEditorInstance(editor)}
               />
             </div>
 
@@ -158,6 +198,13 @@ export default function Compiler() {
           </div>
         </div>
       </main>
+
+      {/* AI Floating Button */}
+      <AIFloatingButton
+        getCurrentCode={getCurrentCode}
+        currentLanguage={getCurrentLanguage()}
+        onInsertCode={handleInsertAICode}
+      />
     </div>
   );
 }

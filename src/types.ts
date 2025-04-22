@@ -28,3 +28,20 @@ export interface EditorTheme {
   name: string;
   theme: string;
 }
+
+// AI-related types
+export interface AIResponse {
+  success: boolean;
+  suggestion: string | null;
+  error: string | null;
+}
+
+export interface AIAssistantProps {
+  isOpen: boolean;
+  onClose: () => void;
+  code: string;
+  language: string;
+  onInsertCode: (code: string) => void;
+}
+
+export type AIAssistanceMode = 'chat' | 'complete' | 'explain' | 'optimize' | 'debug';

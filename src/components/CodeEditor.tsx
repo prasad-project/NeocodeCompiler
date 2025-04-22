@@ -12,9 +12,16 @@ interface CodeEditorProps {
   isExecuting: boolean;
   customInput: string;
   selectedLanguageId: string; // New prop for external language selection
+  onEditorMount?: (editor: any) => void; // Add new prop to expose editor instance
 }
 
-export default function CodeEditor({ onExecute, isExecuting, customInput, selectedLanguageId }: CodeEditorProps) {
+export default function CodeEditor({ 
+  onExecute, 
+  isExecuting, 
+  customInput, 
+  selectedLanguageId,
+  onEditorMount 
+}: CodeEditorProps) {
   const {
     selectedLanguage,
     selectedTheme,
@@ -26,9 +33,14 @@ export default function CodeEditor({ onExecute, isExecuting, customInput, select
     handleFontSizeChange,
     handleResetCode,
     getCurrentCode
-  } = useCodeEditor(async (code: string) => {
-    await onExecute(code, selectedLanguage.id, selectedLanguage.version, customInput);
-  }, selectedLanguageId); // Pass selectedLanguageId to useCodeEditor
+  } = useCodeEditor(
+    async (code: string) => {
+      await onExecute(code, selectedLanguage.id, selectedLanguage.version, customInput);
+    }, 
+    selectedLanguageId,
+    // Pass the editor instance to parent via onEditorMount
+    onEditorMount
+  );
 
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const [isFontSizeMenuOpen, setIsFontSizeMenuOpen] = useState(false);
