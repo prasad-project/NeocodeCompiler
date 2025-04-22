@@ -1,7 +1,6 @@
 import Editor from '@monaco-editor/react';
-import { Play, RotateCcw, Loader2, Settings, Download, Share2, Palette } from 'lucide-react';
+import { Play, RotateCcw, Loader2, Settings, Download, Share2, Palette, Type } from 'lucide-react';
 import {
-  SUPPORTED_LANGUAGES,
   EDITOR_THEMES,
   EDITOR_OPTIONS
 } from '../constants/editorConfig';
@@ -19,11 +18,12 @@ export default function CodeEditor({ onExecute, isExecuting, customInput, select
   const {
     selectedLanguage,
     selectedTheme,
+    fontSize,
     isThemeMenuOpen,
     setIsThemeMenuOpen,
     handleEditorDidMount,
-    handleLanguageChange,
     handleThemeChange,
+    handleFontSizeChange,
     handleResetCode,
     getCurrentCode
   } = useCodeEditor(async (code: string) => {
@@ -31,6 +31,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput, select
   }, selectedLanguageId); // Pass selectedLanguageId to useCodeEditor
 
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
+  const [isFontSizeMenuOpen, setIsFontSizeMenuOpen] = useState(false);
 
   const handleExecute = async () => {
     const code = getCurrentCode();
@@ -154,6 +155,34 @@ export default function CodeEditor({ onExecute, isExecuting, customInput, select
             )}
           </div>
 
+          {/* Font Size Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setIsFontSizeMenuOpen(!isFontSizeMenuOpen)}
+              className="p-2 rounded-full border border-purple-800/50 text-white hover:bg-purple-900/30 transition"
+              title="Change Font Size"
+            >
+              <Type className="w-5 h-5" />
+            </button>
+
+            {isFontSizeMenuOpen && (
+              <div className="absolute right-0 mt-2 min-w-[12rem] bg-gray-800 rounded-xl shadow-xl border border-purple-800/50 z-20 overflow-hidden">
+                <div className="flex flex-col">
+                  {[12, 14, 16, 18, 20].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => handleFontSizeChange(size)}
+                      className={`flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors ${fontSize === size ? 'bg-purple-700 font-semibold' : ''
+                        }`}
+                    >
+                      {size}px
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Run Button */}
           <button
             onClick={handleExecute}
@@ -185,7 +214,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput, select
           defaultLanguage={selectedLanguage.id}
           theme={selectedTheme.theme}
           onMount={handleEditorDidMount}
-          options={EDITOR_OPTIONS}
+          options={{ ...EDITOR_OPTIONS, fontSize }}
           language={selectedLanguage.id}
         />
       </div>

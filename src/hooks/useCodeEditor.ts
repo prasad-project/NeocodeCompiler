@@ -49,6 +49,12 @@ export function useCodeEditor(onExecute?: (code: string) => void, externalLangua
         return EDITOR_THEMES.find((t) => t.id === savedThemeId) || EDITOR_THEMES[0];
     });
 
+    // Add font size state with localStorage persistence
+    const [fontSize, setFontSize] = useState(() => {
+        const savedFontSize = localStorage.getItem('editor-font-size');
+        return savedFontSize ? parseInt(savedFontSize, 10) : 14;
+    });
+
     const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
 
     const handleLanguageChange = (langId: string) => {
@@ -76,6 +82,15 @@ export function useCodeEditor(onExecute?: (code: string) => void, externalLangua
         setIsThemeMenuOpen(false);
     };
 
+    const handleFontSizeChange = (size: number) => {
+        setFontSize(size);
+        localStorage.setItem('editor-font-size', size.toString());
+        
+        if (editorRef.current) {
+            editorRef.current.updateOptions({ fontSize: size });
+        }
+    };
+
     const handleResetCode = () => {
         const defaultCode = DEFAULT_CODE[selectedLanguage.id] || '';
         editorRef.current?.setValue(defaultCode);
@@ -96,6 +111,9 @@ export function useCodeEditor(onExecute?: (code: string) => void, externalLangua
       
         // Use the theme ID instead of theme.theme to apply our custom themes
         monaco.editor.setTheme(selectedTheme.id);
+
+        // Set font size based on saved value
+        editorInstance.updateOptions({ fontSize });
       
         // Run on Ctrl+Enter
         editorInstance.addCommand(
@@ -120,11 +138,13 @@ export function useCodeEditor(onExecute?: (code: string) => void, externalLangua
     return {
         selectedLanguage,
         selectedTheme,
+        fontSize,
         isThemeMenuOpen,
         setIsThemeMenuOpen,
         handleEditorDidMount,
         handleLanguageChange,
         handleThemeChange,
+        handleFontSizeChange,
         handleResetCode,
         getCurrentCode
     };
