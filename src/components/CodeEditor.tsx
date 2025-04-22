@@ -171,7 +171,10 @@ export default function CodeEditor({ onExecute, isExecuting, customInput, select
                   {[12, 14, 16, 18, 20].map((size) => (
                     <button
                       key={size}
-                      onClick={() => handleFontSizeChange(size)}
+                      onClick={() => {
+                        handleFontSizeChange(size);
+                        setIsFontSizeMenuOpen(false); // Close the menu after selection
+                      }}
                       className={`flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors ${fontSize === size ? 'bg-purple-700 font-semibold' : ''
                         }`}
                     >
@@ -188,8 +191,8 @@ export default function CodeEditor({ onExecute, isExecuting, customInput, select
             onClick={handleExecute}
             disabled={isExecuting}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isExecuting
-                ? 'bg-gray-700 text-gray-300 cursor-not-allowed'
-                : 'bg-purple-600 hover:bg-purple-700 text-white shadow'
+              ? 'bg-gray-700 text-gray-300 cursor-not-allowed'
+              : 'bg-purple-600 hover:bg-purple-700 text-white shadow'
               }`}
           >
             {isExecuting ? (

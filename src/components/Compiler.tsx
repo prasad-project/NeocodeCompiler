@@ -7,10 +7,10 @@ import { executeCode } from '../services/codeExecution';
 import { SUPPORTED_LANGUAGES } from '../constants/editorConfig';
 
 // Import specific icons directly - this avoids the module loading issues
-import { FaJava, FaPython, FaRust} from "react-icons/fa";
+import { FaJava, FaPython, FaRust } from "react-icons/fa";
 import { SiJavascript, SiTypescript } from "react-icons/si";
 import { FaGolang } from "react-icons/fa6";
-import {  TbBrandCpp, TbLetterC } from "react-icons/tb";
+import { TbBrandCpp, TbLetterC } from "react-icons/tb";
 import { DiRuby } from "react-icons/di";
 
 export default function Compiler() {
@@ -48,16 +48,16 @@ export default function Compiler() {
   };
 
   // Language icon map with react-icons
-  const languageIcons: Record<string, { icon: JSX.Element, color: string }> = {
-    java: { icon: <FaJava size={24} />, color: "bg-red-600" },
-    cpp: { icon: <TbBrandCpp size={24} />, color: "bg-blue-600" },
-    c: { icon: <TbLetterC size={24} />, color: "bg-blue-800" },
-    python: { icon: <FaPython  size={24} />, color: "bg-yellow-600" },
-    javascript: { icon: <SiJavascript   size={24} />, color: "bg-yellow-400" },
-    typescript: { icon: <SiTypescript size={24} />, color: "bg-blue-500" },
-    go: { icon: <FaGolang size={24} />, color: "bg-cyan-600" },
-    rust: { icon: <FaRust  size={24} />, color: "bg-orange-600" },
-    ruby: { icon: <DiRuby size={24} />, color: "bg-red-500" }
+  const languageIcons: Record<string, { icon: JSX.Element }> = {
+    java: { icon: <FaJava size={30} /> },
+    cpp: { icon: <TbBrandCpp size={30} /> },
+    c: { icon: <TbLetterC size={30} /> },
+    python: { icon: <FaPython size={30} /> },
+    javascript: { icon: <SiJavascript size={30} /> },
+    typescript: { icon: <SiTypescript size={30} /> },
+    go: { icon: <FaGolang size={30} /> },
+    rust: { icon: <FaRust size={30} /> },
+    ruby: { icon: <DiRuby size={30} /> }
   };
 
   return (
@@ -70,8 +70,8 @@ export default function Compiler() {
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-purple-400 to-violet-500 bg-clip-text text-transparent">NeoCompiler</h1>
           </div>
           <nav>
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="px-4 py-2 text-gray-300 hover:text-white transition-all"
             >
               Back to Home
@@ -91,11 +91,10 @@ export default function Compiler() {
                 <button
                   key={lang.id}
                   onClick={() => handleLanguageChange(lang.id)}
-                  className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg text-white font-medium transition-all ${
-                    selectedLanguageId === lang.id 
-                      ? `${langIcon.color} shadow-lg ring-2 ring-purple-400` 
-                      : 'bg-gray-800 hover:bg-gray-700'
-                  }`}
+                  className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg text-gray-500 font-medium transition-all ${selectedLanguageId === lang.id
+                      ? `bg-purple-600/50 text-white shadow-lg ring-2 ring-purple-400`
+                      : 'bg-gray-800/80 backdrop-blur-sm hover:bg-purple-800/40'
+                    }`}
                   title={`${lang.name} (${lang.version})`}
                 >
                   {langIcon.icon}
@@ -117,15 +116,14 @@ export default function Compiler() {
                 <button
                   key={lang.id}
                   onClick={() => handleLanguageChange(lang.id)}
-                  className={`relative w-11 h-11 flex items-center justify-center rounded-lg text-white font-medium transition-all ${
-                    selectedLanguageId === lang.id 
-                      ? `${langIcon.color} shadow-lg ring-2 ring-purple-400 scale-110` 
-                      : 'bg-gray-800 hover:bg-gray-700 hover:scale-105'
-                  }`}
+                  className={`relative w-11 h-11 flex items-center justify-center rounded-lg text-gray-500 font-medium transition-all ${selectedLanguageId === lang.id
+                      ? `bg-purple-600/50 text-white shadow-lg ring-2 ring-purple-400 scale-110`
+                      : 'bg-gray-800/80 backdrop-blur-sm hover:bg-purple-800/40 hover:scale-105'
+                    }`}
                   title={`${lang.name} (${lang.version})`}
                 >
                   {langIcon.icon}
-                  
+
                   {/* Selection indicator */}
                   {selectedLanguageId === lang.id && (
                     <span className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1.5 h-6 bg-purple-400 rounded-full shadow-md"></span>
@@ -139,7 +137,7 @@ export default function Compiler() {
           <div className="flex-1 grid lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6">
             {/* Code Editor */}
             <div className="lg:col-span-3 bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">
-              <CodeEditor 
+              <CodeEditor
                 onExecute={handleExecute}
                 isExecuting={isExecuting}
                 customInput={customInput}
