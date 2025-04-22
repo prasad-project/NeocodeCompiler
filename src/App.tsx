@@ -30,12 +30,12 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col font-sans">
       {/* Header */}
-      <header className="backdrop-blur-sm bg-gray-800/60 border-b border-gray-700 shadow-sm px-6 py-4 sticky top-0 z-20">
+      <header className="backdrop-blur-sm bg-gray-900/80 border-b border-purple-900/40 shadow-sm px-6 py-4 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto flex items-center gap-3">
-          <Code2 className="w-7 h-7 text-green-400" />
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">NeoCompiler</h1>
+          <Code2 className="w-7 h-7 text-purple-400" />
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-purple-400 to-violet-500 bg-clip-text text-transparent">NeoCompiler</h1>
         </div>
       </header>
 
@@ -43,7 +43,7 @@ export default function App() {
       <main className="flex-1 max-w-7xl mx-auto w-full p-4">
         <div className="grid lg:grid-cols-2 gap-6 h-[calc(100vh-7.5rem)]">
           {/* Code Editor */}
-          <div className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+          <div className="bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">
             <CodeEditor 
               onExecute={handleExecute} 
               isExecuting={isExecuting}
@@ -52,7 +52,7 @@ export default function App() {
           </div>
 
           {/* Output Panel */}
-          <div className="bg-gray-800/60 border border-gray-700 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-xl">
+          <div className="bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">
             <OutputPanel
               output={output}
               error={error}
@@ -66,4 +66,3 @@ export default function App() {
     </div>
   );
 }
- 

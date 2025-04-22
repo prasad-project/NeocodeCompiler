@@ -23,15 +23,15 @@ export default function OutputPanel({
     <div className="h-full flex flex-col bg-gray-900 text-white rounded-xl overflow-hidden">
       {/* Output Header */}
       <div className="px-4 pt-4">
-        <h2 className="text-lg font-semibold mb-2">Output</h2>
+        <h2 className="text-lg font-semibold mb-2 text-purple-300">Output</h2>
       </div>
 
       {/* Output Box */}
       <div className="flex-1 px-4 pb-4">
-        <div className="relative h-full bg-gray-800/60 rounded-xl border border-gray-700 backdrop-blur-sm shadow-inner">
+        <div className="relative h-full bg-gray-800/60 rounded-xl border border-purple-900/40 backdrop-blur-sm shadow-inner">
           {isExecuting && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-800/60 z-10 rounded-xl">
-              <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-800/80 z-10 rounded-xl">
+              <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
             </div>
           )}
 
@@ -41,7 +41,7 @@ export default function OutputPanel({
             ) : error ? (
               <pre className="text-red-400 whitespace-pre-wrap">{error}</pre>
             ) : (
-              <pre className="text-green-400 whitespace-pre-wrap">{output}</pre>
+              <pre className="text-purple-300 whitespace-pre-wrap">{output}</pre>
             )}
           </div>
         </div>

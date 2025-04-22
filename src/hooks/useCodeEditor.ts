@@ -34,7 +34,8 @@ export function useCodeEditor(onExecute?: (code: string) => void) {
     const handleThemeChange = (theme: (typeof EDITOR_THEMES)[number]) => {
         setSelectedTheme(theme);
         localStorage.setItem('editor-theme', theme.id); // Save theme
-        monacoRef.current?.editor.setTheme(theme.theme);
+        // Use the theme ID directly which now matches our custom theme definitions
+        monacoRef.current?.editor.setTheme(theme.id);
         setIsThemeMenuOpen(false);
     };
 
@@ -55,7 +56,8 @@ export function useCodeEditor(onExecute?: (code: string) => void) {
         const savedCode = localStorage.getItem(`code-${selectedLanguage.id}`);
         editorInstance.setValue(savedCode || DEFAULT_CODE[selectedLanguage.id]);
       
-        monaco.editor.setTheme(selectedTheme.theme);
+        // Use the theme ID instead of theme.theme to apply our custom themes
+        monaco.editor.setTheme(selectedTheme.id);
       
         // Autosave functionality (debounced)
         let saveTimeout: ReturnType<typeof setTimeout>;
