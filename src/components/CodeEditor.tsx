@@ -53,7 +53,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setIsActionsMenuOpen(false);
+    setIsActionsMenuOpen(false); // Close the popup
   };
 
   // Handle code sharing (copy shareable link)
@@ -65,7 +65,13 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
       .then(() => alert('Code copied to clipboard!'))
       .catch(err => console.error('Failed to copy code:', err));
 
-    setIsActionsMenuOpen(false);
+    setIsActionsMenuOpen(false); // Close the popup
+  };
+
+  // Handle reset code with popup closing
+  const handleResetCodeWithClose = () => {
+    handleResetCode();
+    setIsActionsMenuOpen(false); // Close the popup
   };
 
   return (
@@ -104,7 +110,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
               <div className="absolute right-0 mt-2 min-w-[12rem] bg-gray-800 rounded-xl shadow-xl border border-purple-800/50 z-20 overflow-hidden">
                 <div className="flex flex-col">
                   <button
-                    onClick={handleResetCode}
+                    onClick={handleResetCodeWithClose}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors"
                   >
                     <RotateCcw className="w-4 h-4 text-purple-400" />
