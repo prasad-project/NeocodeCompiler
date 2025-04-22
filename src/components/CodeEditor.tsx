@@ -1,11 +1,12 @@
 import Editor from '@monaco-editor/react';
-import { Play, RotateCcw, ChevronDown, Loader2 } from 'lucide-react';
+import { Play, RotateCcw, ChevronDown, Loader2, Settings, Download, Share2, Palette } from 'lucide-react';
 import {
   SUPPORTED_LANGUAGES,
   EDITOR_THEMES,
   EDITOR_OPTIONS
 } from '../constants/editorConfig';
 import { useCodeEditor } from '../hooks/useCodeEditor';
+import { useState } from 'react';
 
 interface CodeEditorProps {
   onExecute: (code: string, language: string, version: string, input: string) => Promise<void>;
@@ -28,12 +29,43 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
     await onExecute(code, selectedLanguage.id, selectedLanguage.version, customInput);
   });
 
+  const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
+
   const handleExecute = async () => {
     const code = getCurrentCode();
     if (code) {
       localStorage.setItem(`code-${selectedLanguage.id}`, code);
       await onExecute(code, selectedLanguage.id, selectedLanguage.version, customInput);
     }
+  };
+
+  // Handle file download
+  const handleDownload = () => {
+    const code = getCurrentCode();
+    if (!code) return;
+
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `code.${selectedLanguage.extension}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setIsActionsMenuOpen(false);
+  };
+
+  // Handle code sharing (copy shareable link)
+  const handleShare = () => {
+    const code = getCurrentCode();
+    if (!code) return;
+
+    navigator.clipboard.writeText(code)
+      .then(() => alert('Code copied to clipboard!'))
+      .catch(err => console.error('Failed to copy code:', err));
+
+    setIsActionsMenuOpen(false);
   };
 
   return (
@@ -58,14 +90,44 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
 
         {/* Action Buttons */}
         <div className="flex gap-2 items-center">
-          {/* Reset */}
-          <button
-            onClick={handleResetCode}
-            className="p-2 rounded-full border border-purple-800/50 text-white hover:bg-purple-900/30 transition group"
-            title="Reset to default code"
-          >
-            <RotateCcw className="w-5 h-5 transition-transform group-hover:-rotate-180" />
-          </button>
+          {/* Actions Menu Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsActionsMenuOpen(!isActionsMenuOpen)}
+              className="p-2 rounded-full border border-purple-800/50 text-white hover:bg-purple-900/30 transition"
+              title="More Actions"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+
+            {isActionsMenuOpen && (
+              <div className="absolute right-0 mt-2 min-w-[12rem] bg-gray-800 rounded-xl shadow-xl border border-purple-800/50 z-20 overflow-hidden">
+                <div className="flex flex-col">
+                  <button
+                    onClick={handleResetCode}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4 text-purple-400" />
+                    Reset Code
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors"
+                  >
+                    <Download className="w-4 h-4 text-purple-400" />
+                    Download Code
+                  </button>
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-white text-left hover:bg-gray-700 transition-colors"
+                  >
+                    <Share2 className="w-4 h-4 text-purple-400" />
+                    Share Code
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Theme Menu */}
           <div className="relative">
@@ -74,7 +136,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
               className="p-2 rounded-full border border-purple-800/50 text-white hover:bg-purple-900/30 transition"
               title="Change Theme"
             >
-              🎨
+              <Palette className="w-5 h-5" />
             </button>
 
             {isThemeMenuOpen && (
