@@ -16,7 +16,6 @@ const getGeminiApiKey = (): string => {
     return localStorageKey || import.meta.env.VITE_GEMINI_API_KEY || '';
 };
 
-// Function to get AI code assistance
 export async function getAICodeAssistance({
     prompt,
     code = '',
@@ -44,7 +43,7 @@ export async function getAICodeAssistance({
                         role: 'user',
                         parts: [
                             {
-                                text: `You are NeoCompiler AI, a helpful coding assistant specialized in ${language}. 
+                                text: `You are a helpful coding assistant specialized in ${language}. 
                                 Provide concise, working code examples and explanations.
                                 
                                 ${prompt}
@@ -116,7 +115,7 @@ export async function getCodeCompletions({
                         role: 'user',
                         parts: [
                             {
-                                text: `You are NeoCompiler AI, a helpful ${language} coding assistant. Complete the code below in a concise way. 
+                                text: `You are a helpful ${language} coding assistant. Complete the code below in a concise way. 
                                 Only respond with the completed code that would naturally continue from what I provided, with no explanations.
                                 
                                 ${prompt}`
@@ -180,7 +179,7 @@ export async function explainCode({
                         role: 'user',
                         parts: [
                             {
-                                text: `You are NeoCompiler AI, a helpful coding tutor. Explain the following code in a clear, concise way.
+                                text: `You are a helpful coding tutor. Explain the following code in a clear, concise way.
                                 
                                 Please explain this ${language} code:
                                 
