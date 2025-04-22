@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Code2, Terminal, Zap, GitBranch } from 'lucide-react';
+import { Code2, Terminal, Zap, GitBranch, Sparkles, Code, Braces, ArrowRight, Globe, Server } from 'lucide-react';
 
 const features = [
     {
@@ -44,59 +44,137 @@ function Header() {
 
 function Hero() {
     return (
-        <section className="flex-1 flex flex-col md:flex-row items-center justify-between px-4 py-20 mx-auto max-w-7xl gap-16">
-            <div className="flex-1 md:max-w-xl text-center">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                    Modern <span className="bg-gradient-to-r from-purple-400 to-violet-500 bg-clip-text text-transparent">Code Compilation</span> in the Cloud
-                </h1>
-                <p className="mt-6 text-xl text-gray-300">
-                    Write, compile, and execute code in multiple languages directly in your browser.
-                    No setup required. Perfect for learning, testing, and sharing code snippets.
-                </p>
-                <div className="mt-10">
-                    <Link
-                        to="/compiler"
-                        className="px-8 py-4 bg-purple-600 hover:bg-purple-700 rounded-xl text-lg font-medium transition-all shadow-lg hover:shadow-purple-600/20"
-                    >
-                        Start Coding Now
-                    </Link>
+        <section className="relative py-20 px-4 overflow-hidden">
+            <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
+
+                {/* Left Content */}
+                <div className="flex-1 flex flex-col items-center text-center">
+                    {/* Badge */}
+                    <div className="flex items-center px-3 py-1 mb-6 bg-purple-900/30 border border-purple-500/30 rounded-full text-sm text-purple-300 backdrop-blur-sm">
+                        <Sparkles className="w-4 h-4 mr-2 text-purple-400" />
+                        <span>AI-powered code intelligence</span>
+                    </div>
+
+                    {/* Heading */}
+                    <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
+                        <span>Modern</span>{" "}
+                        <span className="bg-gradient-to-r from-purple-400 via-violet-500 to-indigo-400 bg-clip-text text-transparent">Code Compilation</span>{" "}
+                        <span>in the Cloud</span>
+                    </h1>
+
+                    {/* Subtext */}
+                    <p className="mt-6 text-xl text-gray-300/90 max-w-xl">
+                        Write, compile, and execute code in multiple languages directly in your browser.
+                        No setup required. Perfect for learning, testing, and sharing code snippets.
+                    </p>
+
+                    {/* CTA Buttons */}
+                    <div className="mt-8 flex flex-wrap gap-4 justify-center">
+                        <Link
+                            to="/compiler"
+                            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 rounded-xl text-lg font-medium transition-all shadow-lg hover:shadow-purple-600/20 flex items-center gap-2 group"
+                        >
+                            <span>Start Coding Now</span>
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+
+                        <a
+                            href="https://github.com/deepakmodi/neo-compiler"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-6 py-3 border border-purple-500/30 hover:border-purple-500 bg-gray-900/50 hover:bg-gray-800/50 rounded-xl text-lg font-medium transition-all"
+                        >
+                            Star on Github
+                            <GitBranch className="w-4 h-4 inline-block ml-2" />
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div className="flex-1 w-full max-w-2xl">
-                <CodeSnippet />
+
+                {/* Right Content */}
+                <div className="flex-1 flex flex-col items-center w-full">
+                    <div className="relative w-full max-w-md float-animation">
+                        {/* Glow */}
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-violet-600 rounded-2xl blur-xl opacity-10"></div>
+
+                        {/* Code Snippet */}
+                        <div className="relative">
+                            <CodeSnippet />
+                        </div>
+                        {/* Decorative code blocks */}
+                        <div className="absolute -right-12 -bottom-12 w-24 h-24 bg-gray-800/70 rounded-lg border border-purple-500/20 backdrop-blur-sm rotate-6 hidden lg:block hover:rotate-3 transition-transform">
+                            <Code className="w-12 h-12 text-purple-400/50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                        </div>
+                    </div>
+
+                    {/* Features */}
+                    <div className="mt-10 grid grid-cols-3 gap-6 max-w-md w-full">
+                        {[
+                            { icon: <Globe className="w-6 h-6 text-purple-400" />, label: "9+ Languages" },
+                            { icon: <Server className="w-6 h-6 text-purple-400" />, label: "Cloud Execution" },
+                            { icon: <Braces className="w-6 h-6 text-purple-400" />, label: "Code Sharing" },
+                        ].map((item, idx) => (
+                            <div key={idx} className="flex flex-col items-center">
+                                <div className="w-12 h-12 flex items-center justify-center bg-purple-900/30 border border-purple-500/30 rounded-full mb-2 hover:scale-110 transition-transform">
+                                    {item.icon}
+                                </div>
+                                <span className="text-sm text-gray-300">{item.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </section>
     );
 }
 
+
 function CodeSnippet() {
     return (
         <div className="w-full md:flex-1 max-w-2xl">
-            <div className="bg-gray-800/70 rounded-xl border border-purple-900/50 shadow-lg overflow-hidden backdrop-blur-md">
-                <div className="bg-gray-800/80 px-3 py-1.5 sm:px-4 sm:py-2 border-b border-purple-900/30 flex items-center">
+            <div className="bg-gray-800/70 rounded-xl border border-purple-900/50 shadow-lg overflow-hidden backdrop-blur-md hover:shadow-purple-600/10 hover:border-purple-700/60 transition-all duration-300">
+                {/* Terminal header */}
+                <div className="bg-gray-800/90 px-3 py-1.5 sm:px-4 sm:py-2 border-b border-purple-900/30 flex items-center justify-between">
                     <div className="flex space-x-1.5 sm:space-x-2">
-                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500"></div>
-                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
-                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500 hover:bg-red-400 transition-colors cursor-pointer"></div>
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500 hover:bg-yellow-400 transition-colors cursor-pointer"></div>
+                        <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500 hover:bg-green-400 transition-colors cursor-pointer"></div>
                     </div>
-                    <div className="mx-auto text-xs text-gray-400">main.js</div>
+                    <div className="flex items-center text-xs text-gray-400 bg-gray-700/50 px-2 py-0.5 rounded-md">
+                        <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5 animate-pulse"></span>
+                        main.js
+                    </div>
                 </div>
-                <div className="p-2 sm:p-4 overflow-x-auto font-mono text-xs sm:text-sm leading-relaxed">
-                    <pre className="text-gray-300 font-mono whitespace-pre-wrap break-words">
-                        <code>
-                            <span className="text-purple-400">function</span> <span className="text-blue-400">greet</span>(<span className="text-yellow-300">name</span>) {'{'}<br />
-                            {'  '}<span className="text-purple-400">return</span> <span className="text-green-400">{"`Hello, ${name}! Welcome to NeoCompiler`"}</span>;<br />
-                            {'}'}<br />
-                            <br />
-                            <span className="text-purple-400">const</span> <span className="text-blue-300">result</span> = greet(<span className="text-green-400">"Developer"</span>);<br />
-                            console.<span className="text-blue-400">log</span>(result);<br />
-                        </code>
-                    </pre>
+
+                {/* Code content */}
+                <div className="relative">
+                    {/* Code content*/}
+                    <div className="p-2 sm:p-4 pl-8 overflow-x-auto font-mono text-xs sm:text-sm leading-relaxed">
+                        <pre className="text-gray-300 font-mono whitespace-pre-wrap break-words">
+                            <div className="relative">
+                                <code className="block">
+                                    <span className="text-purple-400">function</span> <span className="text-blue-400">greet</span>(<span className="text-yellow-300">name</span>) {'{'}
+                                </code>
+                                <code className="block pl-4 relative">
+                                    <span className="relative text-purple-400">return</span> <span className="relative text-green-400">{"`Hello, ${name}! Welcome to NeoCompiler`"}</span>;
+                                </code>
+                                <code className="block">{'}'}</code>
+                                <code className="block"></code>
+                                <code className="block"><span className="text-purple-400">const</span> <span className="text-blue-300">result</span> = greet(<span className="text-green-400">"Developer"</span>);</code>
+                                <code className="block">console.<span className="text-blue-400">log</span>(result);</code>
+                            </div>
+                        </pre>
+                    </div>
                 </div>
+
+                {/* Terminal output with typing animation effect */}
                 <div className="bg-gray-900/80 border-t border-purple-900/30 p-3 sm:p-4">
-                    <p className="text-xs uppercase text-gray-500 mb-1">Output:</p>
-                    <pre className="text-xs sm:text-sm text-purple-500 font-mono whitespace-pre-wrap break-words">
-                        Output: Hello, Developer! Welcome to NeoCompiler
+                    <div className="flex items-center text-xs uppercase text-gray-500 mb-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
+                        <span>Output</span>
+                        <span className="ml-auto text-[10px] text-gray-500">terminal</span>
+                    </div>
+                    <pre className="text-xs sm:text-sm text-purple-500 font-mono whitespace-pre-wrap break-words relative">
+                        <span className="typing-animation">Hello, Developer! Welcome to NeoCompiler</span>
                     </pre>
                 </div>
             </div>
