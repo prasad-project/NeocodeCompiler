@@ -42,3 +42,13 @@ body {
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+/* Hide scrollbars but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}

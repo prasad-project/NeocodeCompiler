@@ -4,12 +4,24 @@ import { Link } from 'react-router-dom';
 import CodeEditor from './CodeEditor';
 import OutputPanel from './OutputPanel';
 import { executeCode } from '../services/codeExecution';
+import { SUPPORTED_LANGUAGES } from '../constants/editorConfig';
+
+// Import specific icons directly - this avoids the module loading issues
+import { FaJava, FaPython, FaRust} from "react-icons/fa";
+import { SiJavascript, SiTypescript } from "react-icons/si";
+import { FaGolang } from "react-icons/fa6";
+import {  TbBrandCpp, TbLetterC } from "react-icons/tb";
+import { DiRuby } from "react-icons/di";
 
 export default function Compiler() {
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | undefined>();
   const [customInput, setCustomInput] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
+  const [selectedLanguageId, setSelectedLanguageId] = useState(() => {
+    const savedLangId = localStorage.getItem('selected-language');
+    return savedLangId || SUPPORTED_LANGUAGES[0].id;
+  });
 
   const handleExecute = async (code: string, language: string, version: string, input: string) => {
     setIsExecuting(true);
@@ -28,6 +40,24 @@ export default function Compiler() {
     } finally {
       setIsExecuting(false);
     }
+  };
+
+  const handleLanguageChange = (langId: string) => {
+    setSelectedLanguageId(langId);
+    localStorage.setItem('selected-language', langId);
+  };
+
+  // Language icon map with react-icons
+  const languageIcons: Record<string, { icon: JSX.Element, color: string }> = {
+    java: { icon: <FaJava size={24} />, color: "bg-red-600" },
+    cpp: { icon: <TbBrandCpp size={24} />, color: "bg-blue-600" },
+    c: { icon: <TbLetterC size={24} />, color: "bg-blue-800" },
+    python: { icon: <FaPython  size={24} />, color: "bg-yellow-600" },
+    javascript: { icon: <SiJavascript   size={24} />, color: "bg-yellow-400" },
+    typescript: { icon: <SiTypescript size={24} />, color: "bg-blue-500" },
+    go: { icon: <FaGolang size={24} />, color: "bg-cyan-600" },
+    rust: { icon: <FaRust  size={24} />, color: "bg-orange-600" },
+    ruby: { icon: <DiRuby size={24} />, color: "bg-red-500" }
   };
 
   return (
@@ -51,26 +81,82 @@ export default function Compiler() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 mx-auto w-full p-4 sm:p-8">
-        <div className="grid lg:grid-cols-2 gap-6 h-[calc(100vh-7.5rem)]">
-          {/* Code Editor */}
-          <div className="bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">
-            <CodeEditor 
-              onExecute={handleExecute} 
-              isExecuting={isExecuting}
-              customInput={customInput}
-            />
+      <main className="flex-1 mx-auto w-full p-2 sm:p-8">
+        {/* Mobile Language Selector - Horizontal Scrollable */}
+        <div className="block md:hidden overflow-x-auto pb-4 mb-2 whitespace-nowrap scrollbar-hide">
+          <div className="flex space-x-3 px-2 py-2">
+            {SUPPORTED_LANGUAGES.map((lang) => {
+              const langIcon = languageIcons[lang.id];
+              return (
+                <button
+                  key={lang.id}
+                  onClick={() => handleLanguageChange(lang.id)}
+                  className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg text-white font-medium transition-all ${
+                    selectedLanguageId === lang.id 
+                      ? `${langIcon.color} shadow-lg ring-2 ring-purple-400` 
+                      : 'bg-gray-800 hover:bg-gray-700'
+                  }`}
+                  title={`${lang.name} (${lang.version})`}
+                >
+                  {langIcon.icon}
+                  {selectedLanguageId === lang.id && (
+                    <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-purple-400 rounded-full"></span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="flex h-[calc(100vh-8.5rem)] md:h-[calc(100vh-7.5rem)] gap-4">
+          {/* Desktop Language Sidebar - Only visible on md screens and above */}
+          <div className="hidden md:flex w-16 bg-gray-900/80 border border-purple-900/50 rounded-2xl flex-col items-center py-6 space-y-5 shadow-lg">
+            {SUPPORTED_LANGUAGES.map((lang) => {
+              const langIcon = languageIcons[lang.id];
+              return (
+                <button
+                  key={lang.id}
+                  onClick={() => handleLanguageChange(lang.id)}
+                  className={`relative w-11 h-11 flex items-center justify-center rounded-lg text-white font-medium transition-all ${
+                    selectedLanguageId === lang.id 
+                      ? `${langIcon.color} shadow-lg ring-2 ring-purple-400 scale-110` 
+                      : 'bg-gray-800 hover:bg-gray-700 hover:scale-105'
+                  }`}
+                  title={`${lang.name} (${lang.version})`}
+                >
+                  {langIcon.icon}
+                  
+                  {/* Selection indicator */}
+                  {selectedLanguageId === lang.id && (
+                    <span className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1.5 h-6 bg-purple-400 rounded-full shadow-md"></span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          {/* Output Panel */}
-          <div className="bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">
-            <OutputPanel
-              output={output}
-              error={error}
-              customInput={customInput}
-              onInputChange={setCustomInput}
-              isExecuting={isExecuting}
-            />
+          {/* Main Content Area */}
+          <div className="flex-1 grid lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6">
+            {/* Code Editor */}
+            <div className="lg:col-span-3 bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">
+              <CodeEditor 
+                onExecute={handleExecute}
+                isExecuting={isExecuting}
+                customInput={customInput}
+                selectedLanguageId={selectedLanguageId}
+              />
+            </div>
+
+            {/* Output Panel */}
+            <div className="lg:col-span-2 bg-gray-900/80 border border-purple-900/50 rounded-2xl shadow-lg backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-violet-900/20 hover:shadow-xl">
+              <OutputPanel
+                output={output}
+                error={error}
+                customInput={customInput}
+                onInputChange={setCustomInput}
+                isExecuting={isExecuting}
+              />
+            </div>
           </div>
         </div>
       </main>

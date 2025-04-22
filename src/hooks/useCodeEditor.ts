@@ -1,16 +1,48 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SUPPORTED_LANGUAGES, EDITOR_THEMES, DEFAULT_CODE } from '../constants/editorConfig';
 
-export function useCodeEditor(onExecute?: (code: string) => void) {
+export function useCodeEditor(onExecute?: (code: string) => void, externalLanguageId?: string) {
     const editorRef = useRef<any>(null);
     const monacoRef = useRef<any>(null);
 
     // 🔁 Load selected language from localStorage or default to Java
     const [selectedLanguage, setSelectedLanguage] = useState(() => {
+        // If an external language ID is provided, use it
+        if (externalLanguageId) {
+            const lang = SUPPORTED_LANGUAGES.find((lang) => lang.id === externalLanguageId);
+            if (lang) return lang;
+        }
+        
+        // Otherwise use localStorage
         const savedLangId = localStorage.getItem('selected-language');
         const lang = SUPPORTED_LANGUAGES.find((lang) => lang.id === savedLangId);
         return lang || SUPPORTED_LANGUAGES[0];
     });
+
+    // Listen for changes to externalLanguageId prop
+    useEffect(() => {
+        if (externalLanguageId && externalLanguageId !== selectedLanguage.id) {
+            const newLang = SUPPORTED_LANGUAGES.find((lang) => lang.id === externalLanguageId);
+            if (!newLang) return;
+            
+            setSelectedLanguage(newLang);
+            
+            // Update editor's language when it's mounted
+            if (editorRef.current && monacoRef.current) {
+                // Set default code for the language
+                const defaultCode = DEFAULT_CODE[newLang.id] || '';
+                editorRef.current.setValue(defaultCode);
+                
+                // Update the editor language
+                if (editorRef.current.getModel()) {
+                    monacoRef.current.editor.setModelLanguage(
+                        editorRef.current.getModel(),
+                        newLang.id
+                    );
+                }
+            }
+        }
+    }, [externalLanguageId]);
 
     const [selectedTheme, setSelectedTheme] = useState(() => {
         const savedThemeId = localStorage.getItem('editor-theme');
@@ -58,21 +90,12 @@ export function useCodeEditor(onExecute?: (code: string) => void) {
         editorRef.current = editorInstance;
         monacoRef.current = monaco;
       
-        const savedCode = localStorage.getItem(`code-${selectedLanguage.id}`);
-        editorInstance.setValue(savedCode || DEFAULT_CODE[selectedLanguage.id]);
+        // Always use default code for selected language
+        const defaultCode = DEFAULT_CODE[selectedLanguage.id] || '';
+        editorInstance.setValue(defaultCode);
       
         // Use the theme ID instead of theme.theme to apply our custom themes
         monaco.editor.setTheme(selectedTheme.id);
-      
-        // Autosave functionality (debounced)
-        let saveTimeout: ReturnType<typeof setTimeout>;
-        editorInstance.onDidChangeModelContent(() => {
-          clearTimeout(saveTimeout);
-          saveTimeout = setTimeout(() => {
-            const code = editorInstance.getValue();
-            localStorage.setItem(`code-${selectedLanguage.id}`, code);
-          }, 200); // save 200ms after user stops typing
-        });
       
         // Run on Ctrl+Enter
         editorInstance.addCommand(

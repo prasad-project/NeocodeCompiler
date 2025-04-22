@@ -1,5 +1,5 @@
 import Editor from '@monaco-editor/react';
-import { Play, RotateCcw, ChevronDown, Loader2, Settings, Download, Share2, Palette } from 'lucide-react';
+import { Play, RotateCcw, Loader2, Settings, Download, Share2, Palette } from 'lucide-react';
 import {
   SUPPORTED_LANGUAGES,
   EDITOR_THEMES,
@@ -12,9 +12,10 @@ interface CodeEditorProps {
   onExecute: (code: string, language: string, version: string, input: string) => Promise<void>;
   isExecuting: boolean;
   customInput: string;
+  selectedLanguageId: string; // New prop for external language selection
 }
 
-export default function CodeEditor({ onExecute, isExecuting, customInput }: CodeEditorProps) {
+export default function CodeEditor({ onExecute, isExecuting, customInput, selectedLanguageId }: CodeEditorProps) {
   const {
     selectedLanguage,
     selectedTheme,
@@ -27,7 +28,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
     getCurrentCode
   } = useCodeEditor(async (code: string) => {
     await onExecute(code, selectedLanguage.id, selectedLanguage.version, customInput);
-  });
+  }, selectedLanguageId); // Pass selectedLanguageId to useCodeEditor
 
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
 
@@ -78,20 +79,9 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
     <div className="h-full flex flex-col">
       {/* Header bar */}
       <div className="flex items-center justify-between p-4 bg-gray-900 border-b border-purple-900/30">
-        {/* Language Selector */}
-        <div className="relative">
-          <select
-            value={selectedLanguage.id}
-            onChange={(e) => handleLanguageChange(e.target.value)}
-            className="appearance-none bg-gray-800 text-white pr-10 pl-4 py-2 rounded-md border border-purple-800/50 shadow-sm hover:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base cursor-pointer transition-all"
-          >
-            {SUPPORTED_LANGUAGES.map((lang) => (
-              <option key={lang.id} value={lang.id}>
-                {lang.name} ({lang.version})
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-purple-400 pointer-events-none" />
+        {/* Display current language name */}
+        <div className="text-white font-semibold">
+          {selectedLanguage.name} <span className="text-xs text-gray-400">({selectedLanguage.version})</span>
         </div>
 
         {/* Action Buttons */}
@@ -196,6 +186,7 @@ export default function CodeEditor({ onExecute, isExecuting, customInput }: Code
           theme={selectedTheme.theme}
           onMount={handleEditorDidMount}
           options={EDITOR_OPTIONS}
+          language={selectedLanguage.id}
         />
       </div>
     </div>
