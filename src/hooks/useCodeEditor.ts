@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { SUPPORTED_LANGUAGES, EDITOR_THEMES, DEFAULT_CODE } from '../constants/editorConfig';
 
 export function useCodeEditor(onExecute?: (code: string) => void) {
@@ -26,8 +26,13 @@ export function useCodeEditor(onExecute?: (code: string) => void) {
         setSelectedLanguage(newLang);
         localStorage.setItem('selected-language', newLang.id); // Save to localStorage
 
-        const savedCode = localStorage.getItem(`code-${newLang.id}`) || DEFAULT_CODE[newLang.id];
-        editorRef.current?.setValue(savedCode);
+        // Always reset to default code when switching languages, even if returning to a previously used language
+        const defaultCode = DEFAULT_CODE[newLang.id];
+        editorRef.current?.setValue(defaultCode);
+        
+        // Reset the localStorage saved code for this language
+        localStorage.setItem(`code-${newLang.id}`, defaultCode);
+        
         editorRef.current?.getModel()?.setLanguage(newLang.id);
     };
 
