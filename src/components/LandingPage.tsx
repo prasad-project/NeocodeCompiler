@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Code2, Terminal, Zap, GitBranch, Sparkles, Code, Braces, ArrowRight, Globe, Server } from 'lucide-react';
+import { Code2, Terminal, Zap, GitBranch, Sparkles, Bot, Code, Braces, ArrowRight, Globe, Server } from 'lucide-react';
 
 const features = [
     {
@@ -107,10 +107,11 @@ function Hero() {
                     </div>
 
                     {/* Features */}
-                    <div className="mt-10 grid grid-cols-3 gap-6 max-w-md w-full">
+                    <div className="mt-20 grid grid-cols-4 gap-4 max-w-lg w-full">
                         {[
                             { icon: <Globe className="w-6 h-6 text-purple-400" />, label: "9+ Languages" },
                             { icon: <Server className="w-6 h-6 text-purple-400" />, label: "Cloud Execution" },
+                            { icon: <Bot className="w-6 h-6 text-purple-400" />, label: "AI Assistant" },
                             { icon: <Braces className="w-6 h-6 text-purple-400" />, label: "Code Sharing" },
                         ].map((item, idx) => (
                             <div key={idx} className="flex flex-col items-center">
