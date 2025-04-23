@@ -3,6 +3,26 @@ import { Bot, X, Send, Sparkles, Code, CheckCircle2, Copy, Loader2, Settings } f
 import { getAICodeAssistance, explainCode, getCodeCompletions } from '../services/aiAssistance';
 import { AIAssistantProps, AIAssistanceMode } from '../types';
 import AISettings from './AISettings';
+import Prism from 'prismjs';
+
+// Import necessary languages before the theme
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-c';
+import 'prismjs/components/prism-cpp';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-ruby';
+import 'prismjs/components/prism-markup';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-yaml';
+
+// Import Prism CSS theme - now after languages
+import 'prismjs/themes/prism-tomorrow.css';
 
 // Define a message structure for our chat
 interface ChatMessage {
@@ -31,20 +51,6 @@ export default function AIAssistant({
   const latestMessageRef = useRef<HTMLDivElement | null>(null);
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
-  // Scroll to bottom when assistant is opened
-  useEffect(() => {
-    if (isOpen && chatHistory.length > 0) {
-      // Use setTimeout to ensure the chat is fully rendered before scrolling
-      setTimeout(() => {
-        if (lastMessageRef.current) {
-          lastMessageRef.current.scrollIntoView({ behavior: 'auto', block: 'end' });
-        } else if (chatContainerRef.current) {
-          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
-      }, 100);
-    }
-  }, [isOpen, chatHistory.length]);
-
   useEffect(() => {
     // Focus the input when the assistant opens
     if (isOpen && promptInputRef.current) {
@@ -65,6 +71,22 @@ export default function AIAssistant({
   useEffect(() => {
     if (latestMessageRef.current) {
       latestMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [chatHistory]);
+  
+  // Highlight code blocks with Prism.js when chat history changes
+  useEffect(() => {
+    // Use setTimeout to ensure DOM is updated before highlighting
+    if (chatHistory.length > 0) {
+      // First attempt immediately after render
+      Prism.highlightAll();
+      
+      // Second attempt after a delay to ensure DOM has fully updated
+      const timer = setTimeout(() => {
+        Prism.highlightAll();
+      }, 150);
+      
+      return () => clearTimeout(timer);
     }
   }, [chatHistory]);
 
@@ -287,9 +309,45 @@ export default function AIAssistant({
     if (!content) return { __html: '' };
 
     let htmlContent = content
-      .replace(/```([\w]*)\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>')
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      // Format code blocks with proper Prism.js classes and preserve whitespace/formatting
+      .replace(/```([\w]*)\n([\s\S]*?)```/g, (_, lang, codeContent) => {
+        // Handle language mapping for Prism
+        let language = lang.trim() || 'plaintext';
+        
+        // Map some common language aliases
+        if (language === 'js') language = 'javascript';
+        if (language === 'ts') language = 'typescript';
+        if (language === 'py') language = 'python';
+        if (language === 'sh' || language === 'shell' || language === 'bash') language = 'bash';
+        if (language === 'jsx') language = 'javascript';
+        if (language === 'tsx') language = 'typescript';
+        if (language === 'yml') language = 'yaml';
+        
+        // Escape HTML entities and preserve whitespace
+        const lines = codeContent.split('\n');
+        const escapedCode = lines
+          .map((line: string) => 
+            line
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;')
+          )
+          .join('\\n')
+          .trim();
+        
+        // Add data-language attribute for the language label
+        // Use white-space: pre to preserve formatting
+        return `<pre class="code-block" data-language="${language}"><code class="language-${language}">${escapedCode}</code></pre>`;
+      })
+      // Format inline code
+      .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
+      // Convert newlines to <br> (only for text outside of code blocks)
       .replace(/\n/g, '<br />');
+
+    // Replace the escaped newline sequences in code blocks with real newlines
+    htmlContent = htmlContent.replace(/\\n/g, '\n');
 
     return { __html: htmlContent };
   };
