@@ -53,7 +53,7 @@ export default function AIFloatingButton({
                 onMouseLeave={() => !hasBeenShown && setShowTooltip(false)}
                 aria-label="AI Assistant"
             >
-                <Bot className="w-6 h-6 text-white" />
+                <Bot className="w-6 h-6 text-white" /> AI
             </button>
 
             {/* Tooltip */}
