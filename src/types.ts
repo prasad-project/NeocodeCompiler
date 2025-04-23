@@ -45,3 +45,48 @@ export interface AIAssistantProps {
 }
 
 export type AIAssistanceMode = 'chat' | 'complete' | 'explain' | 'optimize' | 'debug';
+
+// User and code snippet types
+export interface UserProfile {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+}
+
+export interface CodeSnippet {
+  id: string;
+  title: string;
+  description: string;
+  code: string;
+  language: string;
+  version?: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  userId: string;
+  isPublic: boolean;
+  likes: number;
+  views: number;
+  tags: string[];
+  shareableLink?: string | null;
+  // Additional creator information
+  creatorName?: string | null;
+  creatorPhotoURL?: string | null;
+}
+
+export interface CodeComment {
+  id: string;
+  snippetId: string;
+  userId: string;
+  userDisplayName: string;
+  userPhotoURL: string | null;
+  content: string;
+  createdAt: Date;
+}
+
+export interface ShareableLink {
+  id: string;
+  snippetId: string;
+  expiresAt: Date | null;
+  accessCount: number;
+}

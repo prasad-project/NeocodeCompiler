@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import { Code2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Save } from 'lucide-react';
+import { Link, useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import CodeEditor from './CodeEditor';
 import OutputPanel from './OutputPanel';
 import AIFloatingButton from './AIFloatingButton';
+import SaveCodeDialog from './SaveCodeDialog';
+import NavBar from './NavBar';
 import { executeCode } from '../services/codeExecution';
 import { SUPPORTED_LANGUAGES } from '../constants/editorConfig';
+import { useAuth } from '../context/AuthContext';
+import { getCodeSnippet, getCodeSnippetByShareableLink } from '../services/codeSnippets';
 
 // Import specific icons directly - this avoids the module loading issues
 import { FaJava, FaPython, FaRust } from "react-icons/fa";
@@ -15,6 +19,11 @@ import { TbBrandCpp, TbLetterC } from "react-icons/tb";
 import { DiRuby } from "react-icons/di";
 
 export default function Compiler() {
+  const { currentUser } = useAuth();
+  const [searchParams] = useSearchParams();
+  const { linkId } = useParams<{ linkId?: string }>();
+  const navigate = useNavigate();
+
   const [output, setOutput] = useState('');
   const [error, setError] = useState<string | undefined>();
   const [customInput, setCustomInput] = useState('');
@@ -23,8 +32,63 @@ export default function Compiler() {
     const savedLangId = localStorage.getItem('selected-language');
     return savedLangId || SUPPORTED_LANGUAGES[0].id;
   });
-
   const [editorInstance, setEditorInstance] = useState<any>(null);
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+  const [loadingSnippet, setLoadingSnippet] = useState(false);
+  const [loadingError, setLoadingError] = useState<string | null>(null);
+
+  // Effect to check if we need to load a snippet from query params or shared link
+  useEffect(() => {
+    const loadSnippet = async () => {
+      setLoadingSnippet(true);
+      setLoadingError(null);
+      
+      try {
+        let snippetData;
+        const snippetId = searchParams.get('snippet');
+        
+        // Case 1: We have a snippetId in query params
+        if (snippetId) {
+          snippetData = await getCodeSnippet(snippetId);
+        } 
+        // Case 2: We have a linkId from shared URL
+        else if (linkId) {
+          snippetData = await getCodeSnippetByShareableLink(linkId);
+        }
+        
+        // If we have snippet data, update the editor
+        if (snippetData) {
+          // Set language
+          setSelectedLanguageId(snippetData.language);
+          
+          // Wait for editor to be initialized
+          if (editorInstance) {
+            editorInstance.setValue(snippetData.code);
+          } else {
+            // If editor not yet initialized, wait for it and then set code
+            const checkInterval = setInterval(() => {
+              if (editorInstance) {
+                editorInstance.setValue(snippetData.code);
+                clearInterval(checkInterval);
+              }
+            }, 100);
+            
+            // Clear interval after 5 seconds to prevent memory leak
+            setTimeout(() => clearInterval(checkInterval), 5000);
+          }
+        }
+      } catch (err: any) {
+        console.error("Error loading snippet:", err);
+        setLoadingError(err.message || "Failed to load the requested snippet");
+      } finally {
+        setLoadingSnippet(false);
+      }
+    };
+    
+    if (searchParams.get('snippet') || linkId) {
+      loadSnippet();
+    }
+  }, [searchParams, linkId, editorInstance]);
 
   const handleExecute = async (code: string, language: string, version: string, input: string) => {
     setIsExecuting(true);
@@ -99,25 +163,58 @@ export default function Compiler() {
     };
   };
 
+  const handleSaveSuccess = (snippetId: string) => {
+    // Optionally navigate to the snippet page or just show a success toast
+    navigate(`/snippets/${snippetId}`);
+  };
+
+  // Additional Save button for navbar
+  const SaveButton = (
+    <button
+      onClick={() => setIsSaveDialogOpen(true)}
+      className="hidden sm:flex items-center gap-2 px-3 py-1.5 border border-purple-600/70 rounded-lg hover:bg-purple-600/20 transition-colors"
+    >
+      <Save className="w-4 h-4" />
+      <span>Save Code</span>
+    </button>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col font-sans">
       {/* Header */}
-      <header className="backdrop-blur-sm bg-gray-900/80 border-b border-purple-900/40 shadow-sm px-6 py-4 sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Code2 className="w-7 h-7 text-purple-400" />
-            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-purple-400 to-violet-500 bg-clip-text text-transparent">NeoCompiler</h1>
+      <NavBar 
+        showCompilerButton={false}
+        showHomeButton={true}
+        additionalButtons={currentUser ? SaveButton : undefined}
+      />
+
+      {/* Loading overlay */}
+      {loadingSnippet && (
+        <div className="fixed inset-0 z-40 bg-black/50 flex items-center justify-center">
+          <div className="bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg border border-purple-900/40">
+            <div className="flex items-center justify-center space-x-3">
+              <svg className="animate-spin h-8 w-8 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <p className="text-lg font-medium text-white">Loading snippet...</p>
+            </div>
           </div>
-          <nav>
-            <Link
-              to="/"
-              className="px-4 py-2 text-gray-300 hover:text-white transition-all"
-            >
-              Back to Home
-            </Link>
-          </nav>
         </div>
-      </header>
+      )}
+
+      {/* Error message */}
+      {loadingError && (
+        <div className="max-w-3xl mx-auto mt-4">
+          <div className="bg-red-900/30 border border-red-800 rounded-lg p-4">
+            <p className="text-red-400">{loadingError}</p>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 mx-auto w-full p-2 sm:p-8">
@@ -145,6 +242,19 @@ export default function Compiler() {
             })}
           </div>
         </div>
+
+        {/* Save button for mobile - visible below sm breakpoint */}
+        {currentUser && (
+          <div className="sm:hidden mb-2 px-2">
+            <button
+              onClick={() => setIsSaveDialogOpen(true)}
+              className="w-full py-2 bg-purple-600 hover:bg-purple-700 rounded-lg flex items-center justify-center gap-2 text-white"
+            >
+              <Save className="w-4 h-4" />
+              <span>Save Code</span>
+            </button>
+          </div>
+        )}
 
         <div className="flex h-[calc(100vh-8.5rem)] md:h-[calc(100vh-7.5rem)] gap-4">
           {/* Desktop Language Sidebar - Only visible on md screens and above */}
@@ -204,6 +314,15 @@ export default function Compiler() {
         getCurrentCode={getCurrentCode}
         currentLanguage={getCurrentLanguage()}
         onInsertCode={handleInsertAICode}
+      />
+
+      {/* Save Code Dialog */}
+      <SaveCodeDialog
+        isOpen={isSaveDialogOpen}
+        onClose={() => setIsSaveDialogOpen(false)}
+        code={getCurrentCode()}
+        language={selectedLanguageId}
+        onSuccess={handleSaveSuccess}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Code2, Terminal, Zap, GitBranch, Sparkles, Bot, Code, Braces, ArrowRight, Globe, Server } from 'lucide-react';
+import { Terminal, Zap, Sparkles, Bot, Code, Code2, Braces, ArrowRight, Globe, Server, Save, Share, User, Lock, LogIn } from 'lucide-react';
+import NavBar from './NavBar';
 
 const features = [
     {
@@ -13,38 +14,32 @@ const features = [
         desc: "Instantly compile and run your code with real-time feedback and error reporting.",
     },
     {
-        icon: <GitBranch className="w-10 h-10 text-purple-400 mb-4" />,
-        title: "Advanced Editor",
-        desc: "Feature-rich code editor with syntax highlighting, auto-complete, and code formatting.",
+        icon: <Save className="w-10 h-10 text-purple-400 mb-4" />,
+        title: "Save & Share Code",
+        desc: "Save your code snippets to your profile and easily share them with others via a unique link.",
+    },
+    {
+        icon: <Bot className="w-10 h-10 text-purple-400 mb-4" />,
+        title: "AI Assistant",
+        desc: "Get help from our AI assistant to optimize, debug, or explain your code.",
     },
 ];
 
-function Header() {
+export default function LandingPage() {
     return (
-        <header className="bg-gray-900/80 border-b border-purple-900/40 shadow-sm px-6 py-4">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <Code2 className="w-7 h-7 text-purple-400" />
-                    <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-purple-400 to-violet-500 bg-clip-text text-transparent">
-                        NeoCompiler
-                    </h1>
-                </div>
-                <nav>
-                    <Link
-                        to="/compiler"
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-all"
-                    >
-                        Launch Compiler
-                    </Link>
-                </nav>
-            </div>
-        </header>
+        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col font-sans">
+            <NavBar showHomeButton={false} />
+            <Hero />
+            <Features />
+            <UserFeatures />
+            <Footer />
+        </div>
     );
 }
 
 function Hero() {
     return (
-        <section className="relative py-20 px-4 overflow-hidden">
+        <section className="relative py-16 sm:py-20 px-4 overflow-hidden">
             <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
 
                 {/* Left Content */}
@@ -65,7 +60,7 @@ function Hero() {
                     {/* Subtext */}
                     <p className="mt-6 text-xl text-gray-300/90 max-w-xl">
                         Write, compile, and execute code in multiple languages directly in your browser.
-                        No setup required. Perfect for learning, testing, and sharing code snippets.
+                        Save your snippets and share them with friends. No setup required.
                     </p>
 
                     {/* CTA Buttons */}
@@ -78,15 +73,13 @@ function Hero() {
                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                         </Link>
 
-                        <a
-                            href="https://github.com/deepakmodi/neo-compiler"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-6 py-3 border border-purple-500/30 hover:border-purple-500 bg-gray-900/50 hover:bg-gray-800/50 rounded-xl text-lg font-medium transition-all"
+                        <Link
+                            to="/auth"
+                            className="px-6 py-3 border border-purple-500/30 hover:border-purple-500 bg-gray-900/50 hover:bg-gray-800/50 rounded-xl text-lg font-medium transition-all flex items-center gap-2"
                         >
-                            Star on Github
-                            <GitBranch className="w-4 h-4 inline-block ml-2" />
-                        </a>
+                            <span>Create Account</span>
+                            <User className="w-4 h-4" />
+                        </Link>
                     </div>
                 </div>
 
@@ -110,9 +103,9 @@ function Hero() {
                     <div className="mt-20 grid grid-cols-4 gap-4 max-w-lg w-full">
                         {[
                             { icon: <Globe className="w-6 h-6 text-purple-400" />, label: "9+ Languages" },
-                            { icon: <Server className="w-6 h-6 text-purple-400" />, label: "Cloud Execution" },
+                            { icon: <Save className="w-6 h-6 text-purple-400" />, label: "Save Snippets" },
                             { icon: <Bot className="w-6 h-6 text-purple-400" />, label: "AI Assistant" },
-                            { icon: <Braces className="w-6 h-6 text-purple-400" />, label: "Code Sharing" },
+                            { icon: <Share className="w-6 h-6 text-purple-400" />, label: "Share Code" },
                         ].map((item, idx) => (
                             <div key={idx} className="flex flex-col items-center">
                                 <div className="w-12 h-12 flex items-center justify-center bg-purple-900/30 border border-purple-500/30 rounded-full mb-2 hover:scale-110 transition-transform">
@@ -127,7 +120,6 @@ function Hero() {
         </section>
     );
 }
-
 
 function CodeSnippet() {
     return (
@@ -188,7 +180,7 @@ function Features() {
         <section className="py-16">
             <div className="max-w-6xl mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {features.map(({ icon, title, desc }) => (
                         <div key={title} className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all">
                             {icon}
@@ -202,6 +194,60 @@ function Features() {
     );
 }
 
+function UserFeatures() {
+    return (
+        <section className="py-16 bg-gray-900/50">
+            <div className="max-w-6xl mx-auto px-4">
+                <h2 className="text-3xl font-bold text-center mb-6">Start Building Your Code Library</h2>
+                <p className="text-center text-lg text-gray-300 mb-12 max-w-2xl mx-auto">
+                    Create an account to save your code snippets, share them with others, and build a personal library of your coding journey.
+                </p>
+                
+                <div className="grid md:grid-cols-3 gap-8">
+                    <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
+                        <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
+                            <Save className="w-8 h-8 text-purple-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">Save Your Code</h3>
+                        <p className="text-gray-300">
+                            Never lose your code snippets again. Save them to your account with custom titles and descriptions.
+                        </p>
+                    </div>
+                    
+                    <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
+                        <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
+                            <Share className="w-8 h-8 text-purple-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">Share with Others</h3>
+                        <p className="text-gray-300">
+                            Generate shareable links to send to friends, colleagues, or post online. Control who can see your code.
+                        </p>
+                    </div>
+                    
+                    <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
+                        <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
+                            <Lock className="w-8 h-8 text-purple-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">Private & Secure</h3>
+                        <p className="text-gray-300">
+                            Your private snippets stay private. Choose which snippets to make public and which to keep just for you.
+                        </p>
+                    </div>
+                </div>
+                
+                <div className="mt-12 flex justify-center">
+                    <Link
+                        to="/auth"
+                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-violet-700 hover:from-purple-700 hover:to-violet-800 rounded-xl text-lg font-medium transition-all shadow-lg hover:shadow-purple-600/20 flex items-center gap-2"
+                    >
+                        <span>Create Free Account</span>
+                        <ArrowRight className="w-5 h-5" />
+                    </Link>
+                </div>
+            </div>
+        </section>
+    );
+}
 
 function Footer() {
     return (
@@ -232,17 +278,5 @@ function Footer() {
                 </div>
             </div>
         </footer>
-    );
-}
-
-
-export default function LandingPage() {
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col font-sans">
-            <Header />
-            <Hero />
-            <Features />
-            <Footer />
-        </div>
     );
 }
