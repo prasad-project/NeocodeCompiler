@@ -18,7 +18,7 @@ export const defineMonacoThemes = (monaco: any) => {
       { token: 'tag', foreground: '2dd4bf' },          // teal-400
     ],
     colors: {
-      'editor.background': '#0f172a',                  // slate-900 (darker)
+      'editor.background': '#030712',                  // gray-950 (much darker)
       'editor.foreground': '#d1d5db',                  // gray-300
       'editor.lineHighlightBackground': '#1e293b',     // slate-800
       'editorCursor.foreground': '#a78bfa',            // purple-400
