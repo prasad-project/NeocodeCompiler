@@ -147,10 +147,10 @@ export function useCodeEditor(
             }
           }
         );
-      
-        // Format on Ctrl+Shift+F
+        
+        // Format code on Shift+Alt+F
         editorInstance.addCommand(
-          monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF,
+          monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF,
           () => {
             editorInstance.getAction('editor.action.formatDocument')?.run();
           }
