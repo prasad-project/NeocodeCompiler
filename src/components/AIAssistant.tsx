@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Bot, X, Send, Sparkles, Code, CheckCircle2, Copy, Loader2, Settings } from 'lucide-react';
+import { Bot, X, ChevronsUp, Sparkles, Code, CheckCircle2, Copy, Loader2, Settings } from 'lucide-react';
 import { getAICodeAssistance, explainCode, getCodeCompletions } from '../services/aiAssistance';
 import { AIAssistantProps, AIAssistanceMode } from '../types';
 import AISettings from './AISettings';
@@ -534,7 +534,7 @@ export default function AIAssistant({
                 className="absolute bottom-3 right-3 p-2 text-white bg-purple-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-700 transition-colors"
                 disabled={isLoading || !prompt.trim()}
               >
-                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ChevronsUp className="w-4 h-4" />}
               </button>
             </form>
             <p className="text-gray-500 text-xs mt-1 text-center">Press Enter to send, Shift+Enter for new line</p>
