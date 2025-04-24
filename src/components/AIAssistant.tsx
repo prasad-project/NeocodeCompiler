@@ -489,7 +489,7 @@ export default function AIAssistant({
             <div className="flex items-start">
               <div className="w-full bg-gray-800 text-white rounded-lg rounded-tl-none p-3 flex items-center gap-2">
                 <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
-                <p className="text-gray-300">Thinking...</p>
+                <p className="text-gray-300">Typing...</p>
               </div>
             </div>
           )}

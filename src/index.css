@@ -88,7 +88,7 @@ body {
 .ai-response .code-block {
   margin: 1rem 0;
   border-radius: 0.5rem;
-  background-color: #1e1e1e;
+  background-color: #111827;
   border: 1px solid rgba(139, 92, 246, 0.2);
   overflow-x: auto;
   position: relative;
@@ -122,7 +122,7 @@ body {
   padding: 0.1rem 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
-  color: #e879f9;
+  color: #c899ee;
   white-space: nowrap;
 }
 
