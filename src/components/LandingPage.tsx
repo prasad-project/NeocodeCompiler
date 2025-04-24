@@ -189,7 +189,7 @@ function Hero() {
                                 <div className="w-12 h-12 flex items-center justify-center bg-purple-900/30 border border-purple-500/30 rounded-full mb-2 hover:scale-110 transition-transform">
                                     {item.icon}
                                 </div>
-                                <span className="text-sm text-gray-300">{item.label}</span>
+                                <span className="text-xs sm:text-sm text-gray-300">{item.label}</span>
                             </div>
                         ))}
 
