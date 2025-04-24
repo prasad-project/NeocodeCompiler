@@ -79,24 +79,24 @@ const supportedLanguages = [
 
 const features = [
     {
-        icon: <Terminal className="w-10 h-10 text-purple-400 mb-4" />,
+        icon: <Terminal className="w-10 h-10 text-purple-400" />,
         title: "Multiple Languages",
-        desc: "Support for popular programming languages including Python, JavaScript, Java, and more.",
+        desc: "Support for popular programming languages - Java, Python, C++, JS and more.",
     },
     {
-        icon: <Zap className="w-10 h-10 text-purple-400 mb-4" />,
+        icon: <Zap className="w-10 h-10 text-purple-400" />,
         title: "Real-time Execution",
-        desc: "Instantly compile and run your code with real-time feedback and error reporting.",
+        desc: "Instantly compile and run your code in cloud with real-time feedback and error reporting.",
     },
     {
-        icon: <Save className="w-10 h-10 text-purple-400 mb-4" />,
+        icon: <Save className="w-10 h-10 text-purple-400" />,
         title: "Save & Share Code",
         desc: "Save your code snippets to your profile and easily share them with others via a unique link.",
     },
     {
-        icon: <Bot className="w-10 h-10 text-purple-400 mb-4" />,
+        icon: <Bot className="w-10 h-10 text-purple-400" />,
         title: "AI Assistant",
-        desc: "Get help from our AI assistant to optimize, debug, or explain your code.",
+        desc: "Get help from our Gemini powered AI assistant to optimize, debug, or explain your code.",
     },
 ];
 
@@ -267,13 +267,20 @@ function Features() {
                     <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
                         Everything you need to code efficiently in one browser-based platform
                     </p>
-                </div>                
+                </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {features.map(({ icon, title, desc }) => (
                         <div key={title} className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all">
-                            {icon}
-                            <h3 className="text-xl font-semibold mb-2">{title}</h3>
-                            <p className="text-gray-300">{desc}</p>
+                            {/* Icon with concentric circular background */}
+                            <div className="relative -mt-12 flex justify-center">
+                                <div className="absolute rounded-full bg-purple-900/20 w-20 h-20 animate-pulse-slow"></div>
+                                <div className="absolute rounded-full bg-purple-800/30 w-16 h-16 m-2"></div>
+                                <div className="relative w-20 h-20 flex items-center justify-center">
+                                    {icon}
+                                </div>
+                            </div>
+                            <h3 className="my-2 text-xl font-semibold text-center">{title}</h3>
+                            <p className="text-gray-300 text-center">{desc}</p>
                         </div>
                     ))}
                 </div>
