@@ -1,6 +1,63 @@
 import { Link } from 'react-router-dom';
-import { Terminal, Zap, Sparkles, Bot, Code, Code2, Braces, ArrowRight, Globe, Server, Save, Share, User, Lock, LogIn } from 'lucide-react';
+import { Terminal, Zap, Sparkles, Bot, Code, Code2, ArrowRight, Globe, Save, Share, User, Lock, ChevronDown, Check, Laptop } from 'lucide-react';
 import NavBar from './NavBar';
+import { useState } from 'react';
+
+// Import language icons
+import { FaJava, FaPython, FaRust } from "react-icons/fa";
+import { SiJavascript, SiTypescript } from "react-icons/si";
+import { FaGolang } from "react-icons/fa6";
+import { TbBrandCpp, TbLetterC } from "react-icons/tb";
+import { DiRuby } from "react-icons/di";
+
+// Single consolidated constant for language data
+const supportedLanguages = [
+    { 
+        name: 'JavaScript', 
+        color: 'text-yellow-400',
+        icon: <SiJavascript className="w-6 h-6" />
+    },
+    { 
+        name: 'Python', 
+        color: 'text-blue-400',
+        icon: <FaPython className="w-6 h-6" /> 
+    },
+    { 
+        name: 'Java', 
+        color: 'text-orange-500',
+        icon: <FaJava className="w-6 h-6" /> 
+    },
+    { 
+        name: 'C++', 
+        color: 'text-blue-500',
+        icon: <TbBrandCpp className="w-6 h-6" /> 
+    },
+    { 
+        name: 'TypeScript', 
+        color: 'text-blue-600',
+        icon: <SiTypescript className="w-6 h-6" /> 
+    },
+    { 
+        name: 'Go', 
+        color: 'text-cyan-400',
+        icon: <FaGolang className="w-6 h-6" /> 
+    },
+    { 
+        name: 'Rust', 
+        color: 'text-orange-600',
+        icon: <FaRust className="w-6 h-6" /> 
+    },
+    { 
+        name: 'Ruby', 
+        color: 'text-red-500',
+        icon: <DiRuby className="w-8 h-8" /> 
+    },
+    { 
+        name: 'C', 
+        color: 'text-blue-400',
+        icon: <TbLetterC className="w-6 h-6" /> 
+    },
+];
 
 const features = [
     {
@@ -30,8 +87,12 @@ export default function LandingPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col font-sans">
             <NavBar showHomeButton={false} />
             <Hero />
+            <LanguageShowcase />
             <Features />
+            <HowItWorks />
+            <Testimonials />
             <UserFeatures />
+            <FAQ />
             <Footer />
         </div>
     );
@@ -51,7 +112,7 @@ function Hero() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
                         <span>Modern</span>{" "}
                         <span className="bg-gradient-to-r from-purple-400 via-violet-500 to-indigo-400 bg-clip-text text-transparent">Code Compilation</span>{" "}
                         <span>in the Cloud</span>
@@ -101,7 +162,7 @@ function Hero() {
 
                     {/* Features */}
                     <div className="mt-20 grid grid-cols-4 gap-4 max-w-lg w-full">
-                        {[
+                        {[ 
                             { icon: <Globe className="w-6 h-6 text-purple-400" />, label: "9+ Languages" },
                             { icon: <Save className="w-6 h-6 text-purple-400" />, label: "Save Snippets" },
                             { icon: <Bot className="w-6 h-6 text-purple-400" />, label: "AI Assistant" },
@@ -114,6 +175,7 @@ function Hero() {
                                 <span className="text-sm text-gray-300">{item.label}</span>
                             </div>
                         ))}
+
                     </div>
                 </div>
             </div>
@@ -178,7 +240,7 @@ function CodeSnippet() {
 function Features() {
     return (
         <section className="py-16">
-            <div className="max-w-6xl mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {features.map(({ icon, title, desc }) => (
@@ -194,15 +256,198 @@ function Features() {
     );
 }
 
+function LanguageShowcase() {
+    return (
+        <section className="py-16 relative overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Supported Languages</h2>
+                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                        Write and execute code in multiple programming languages without leaving your browser
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-4">
+                    {supportedLanguages.map((lang) => (
+                        <div
+                            key={lang.name}
+                            className="flex flex-col items-center p-4 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all hover:scale-105 hover:shadow-lg hover:shadow-purple-500/10"
+                        >
+                            <div className={`w-12 h-12 flex items-center justify-center bg-gray-900/70 rounded-full mb-3 ${lang.color}`}>
+                                {lang.icon}
+                            </div>
+                            <span className="text-sm font-medium">{lang.name}</span>
+                        </div>
+                    ))}
+
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-4 mt-10">
+                    <div className="px-4 py-2 bg-gray-800/70 rounded-full border border-purple-900/30 flex items-center gap-2 text-sm">
+                        <Check className="w-4 h-4 text-green-400" />
+                        <span>Syntax Highlighting</span>
+                    </div>
+                    <div className="px-4 py-2 bg-gray-800/70 rounded-full border border-purple-900/30 flex items-center gap-2 text-sm">
+                        <Check className="w-4 h-4 text-green-400" />
+                        <span>Auto-completion</span>
+                    </div>
+                    <div className="px-4 py-2 bg-gray-800/70 rounded-full border border-purple-900/30 flex items-center gap-2 text-sm">
+                        <Check className="w-4 h-4 text-green-400" />
+                        <span>Real-time Compilation</span>
+                    </div>
+                    <div className="px-4 py-2 bg-gray-800/70 rounded-full border border-purple-900/30 flex items-center gap-2 text-sm">
+                        <Check className="w-4 h-4 text-green-400" />
+                        <span>Error Highlighting</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function HowItWorks() {
+    return (
+        <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">How It Works</h2>
+                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                        Code, compile, and share in just a few clicks
+                    </p>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                    {[ 
+                        {
+                            step: "1",
+                            title: "Select a Language",
+                            description: "Choose from over 9 programming languages including JavaScript, Python, Java, and C++",
+                            icon: <Code className="w-8 h-8 text-purple-400" />
+                        },
+                        {
+                            step: "2",
+                            title: "Write Your Code",
+                            description: "Use our feature-rich editor with syntax highlighting, auto-completion, and more",
+                            icon: <Laptop className="w-8 h-8 text-purple-400" />
+                        },
+                        {
+                            step: "3",
+                            title: "Execute & Share",
+                            description: "Run your code instantly and share your snippets with a unique link",
+                            icon: <Share className="w-8 h-8 text-purple-400" />
+                        }
+                    ].map((item, idx) => (
+                        <div key={idx} className="relative p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all">
+                            <div className="absolute -top-4 -left-4 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                                {item.step}
+                            </div>
+                            <div className="mb-4 w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full">
+                                {item.icon}
+                            </div>
+                            <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                            <p className="text-gray-300">{item.description}</p>
+                        </div>
+                    ))}
+
+                </div>
+
+                <div className="mt-12 text-center">
+                    <Link
+                        to="/compiler"
+                        className="px-6 py-3 bg-gray-800/80 hover:bg-gray-700 border border-purple-900/30 hover:border-purple-500/50 rounded-lg transition-all shadow-sm hover:shadow-purple-900/20 inline-flex items-center gap-2"
+                    >
+                        <Terminal className="w-5 h-5" />
+                        <span>Try it now</span>
+                    </Link>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function Testimonials() {
+    return (
+        <section className="py-16 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">What Users Say</h2>
+                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                        Join thousands of developers who trust NeoCompiler for their coding needs
+                    </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    {[ 
+                        {
+                            quote: "NeoCompiler has completely transformed how I teach programming to my students. The ability to share code snippets has made remote learning so much easier.",
+                            name: "Sarah Johnson",
+                            title: "Computer Science Professor",
+                            image: "https://randomuser.me/api/portraits/women/44.jpg"
+                        },
+                        {
+                            quote: "The AI assistance feature is a game changer. It helps me optimize my code and learn new techniques without having to search through endless documentation.",
+                            name: "Michael Chen",
+                            title: "Full Stack Developer",
+                            image: "https://randomuser.me/api/portraits/men/32.jpg"
+                        },
+                        {
+                            quote: "I love how I can quickly switch between different programming languages and test ideas without setting up local environments. It's perfect for quick prototyping.",
+                            name: "Jasmine Patel",
+                            title: "Software Engineering Student",
+                            image: "https://randomuser.me/api/portraits/women/36.jpg"
+                        }
+                    ].map((testimonial, idx) => (
+                        <div
+                            key={idx}
+                            className="p-6 bg-gray-800/40 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-800/10"
+                        >
+                            <div className="flex flex-col h-full">
+                                <div className="mb-4">
+                                    {/* Quote marks */}
+                                    <svg width="45" height="36" className="text-purple-500/40 mb-1" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                        <path d="M13.415.001C6.07 5.185.887 13.681.887 23.041c0 7.632 4.608 12.096 9.936 12.096 5.04 0 8.784-4.032 8.784-8.784 0-4.752-3.312-8.208-7.632-8.208-.864 0-2.016.144-2.304.288.72-4.896 5.328-10.656 9.936-13.536L13.415.001zm24.768 0c-7.2 5.184-12.384 13.68-12.384 23.04 0 7.632 4.608 12.096 9.936 12.096 4.896 0 8.784-4.032 8.784-8.784 0-4.752-3.456-8.208-7.776-8.208-.864 0-1.872.144-2.16.288.72-4.896 5.184-10.656 9.792-13.536L38.183.001z"></path>
+                                    </svg>
+
+                                    <p className="text-gray-300 italic mb-6">{testimonial.quote}</p>
+                                </div>
+
+                                <div className="mt-auto flex items-center">
+                                    <div className="w-10 h-10 mr-3 rounded-full overflow-hidden bg-gray-700">
+                                        <img
+                                            src={testimonial.image}
+                                            alt={testimonial.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                // Fallback for image loading error
+                                                const target = e.target as HTMLImageElement;
+                                                target.src = "https://via.placeholder.com/150?text=User";
+                                            }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <p className="font-medium text-white">{testimonial.name}</p>
+                                        <p className="text-sm text-gray-400">{testimonial.title}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+
+                </div>
+            </div>
+        </section>
+    );
+}
+
 function UserFeatures() {
     return (
         <section className="py-16 bg-gray-900/50">
-            <div className="max-w-6xl mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-6">Start Building Your Code Library</h2>
                 <p className="text-center text-lg text-gray-300 mb-12 max-w-2xl mx-auto">
                     Create an account to save your code snippets, share them with others, and build a personal library of your coding journey.
                 </p>
-                
+
                 <div className="grid md:grid-cols-3 gap-8">
                     <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
                         <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
@@ -213,7 +458,7 @@ function UserFeatures() {
                             Never lose your code snippets again. Save them to your account with custom titles and descriptions.
                         </p>
                     </div>
-                    
+
                     <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
                         <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
                             <Share className="w-8 h-8 text-purple-400" />
@@ -223,7 +468,7 @@ function UserFeatures() {
                             Generate shareable links to send to friends, colleagues, or post online. Control who can see your code.
                         </p>
                     </div>
-                    
+
                     <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
                         <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
                             <Lock className="w-8 h-8 text-purple-400" />
@@ -234,7 +479,7 @@ function UserFeatures() {
                         </p>
                     </div>
                 </div>
-                
+
                 <div className="mt-12 flex justify-center">
                     <Link
                         to="/auth"
@@ -249,10 +494,97 @@ function UserFeatures() {
     );
 }
 
+function FAQ() {
+    return (
+        <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
+            <div className="max-w-4xl mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                        Got questions? We've got answers
+                    </p>
+                </div>
+
+                <div className="space-y-3">
+                    {[ 
+                        {
+                            question: "Is NeoCompiler free to use?",
+                            answer: "Yes, NeoCompiler is completely free for individual use. Create an account to access additional features like saving and sharing code snippets."
+                        },
+                        {
+                            question: "How secure is my code on NeoCompiler?",
+                            answer: "Your code is securely stored and only accessible to you unless you choose to share it. We use industry-standard encryption and secure connections to protect your data."
+                        },
+                        {
+                            question: "Which programming languages are supported?",
+                            answer: "We currently support JavaScript, Python, Java, C++, TypeScript, Go, Rust, Ruby, and C. We're continuously working to add more languages based on user demand."
+                        },
+                        {
+                            question: "Can I use NeoCompiler offline?",
+                            answer: "NeoCompiler requires an internet connection to compile and run code as it uses cloud-based execution engines. However, the editor works offline for typing code."
+                        },
+                        {
+                            question: "How does the AI assistant work?",
+                            answer: "Our AI assistant analyzes your code to provide suggestions, optimizations, and explanations. It can help debug issues, explain concepts, and even generate code snippets based on your needs."
+                        },
+                        {
+                            question: "Are there any usage limits?",
+                            answer: "Free accounts have reasonable usage limits to ensure fair use. For high-volume usage or team accounts, please contact us to discuss enterprise options."
+                        }
+                    ].map((item, idx) => {
+                        const [isOpen, setIsOpen] = useState(false);
+
+                        return (
+                            <div
+                                key={idx}
+                                className="p-4 bg-gray-800/40 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all"
+                            >
+                                <button
+                                    onClick={() => setIsOpen(!isOpen)}
+                                    className="w-full text-left text-lg flex items-center justify-between focus:outline-none"
+                                >
+                                    <div className="flex items-center">
+                                        <ChevronDown
+                                            className={`w-5 h-5 text-purple-400 mr-2 flex-shrink-0 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
+                                        />
+                                        <span>{item.question}</span>
+                                    </div>
+                                </button>
+
+                                <div
+                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100 mt-3' : 'max-h-0 opacity-0'
+                                        }`}
+                                >
+                                    <div className="pl-7 text-gray-300">
+                                        <p>{item.answer}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                <div className="mt-10 text-center">
+                    <p className="text-gray-400 mb-4">
+                        Have more questions? We're happy to help.
+                    </p>
+                    <a
+                        href="mailto:deepakmodi8676@gmail.com"
+                        className="px-6 py-3 bg-gray-800/80 hover:bg-gray-700 border border-purple-900/30 hover:border-purple-500/50 rounded-lg transition-all shadow-sm hover:shadow-purple-900/20 inline-flex items-center gap-2"
+                    >
+                        <span>Contact Support</span>
+                        <ArrowRight className="w-4 h-4" />
+                    </a>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 function Footer() {
     return (
         <footer className="py-5 border-t border-purple-900/40 bg-gray-900/90 backdrop-blur-sm">
-            <div className="max-w-6xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-gray-400">
                         <div className="flex items-center gap-2 mb-2">
