@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Terminal, Zap, Sparkles, Bot, Code, Code2, ArrowRight, Globe, Save, Share, User, Lock, ChevronDown, Check, Laptop, Bug, Rocket, LucideGithub } from 'lucide-react';
+import { Terminal, Zap, Sparkles, Bot, Code, Code2, ArrowRight, Globe, Save, Share, User, Lock, ChevronDown, Check, Laptop, Bug, Rocket } from 'lucide-react';
 import NavBar from './NavBar';
 import { useState } from 'react';
 
