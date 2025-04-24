@@ -102,7 +102,7 @@ const features = [
 export default function LandingPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col font-sans">
-            <NavBar showHomeButton={false} />
+            <NavBar />
             <Hero />
             <LanguageShowcase />
             <HowItWorks />

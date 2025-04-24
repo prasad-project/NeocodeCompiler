@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Code2, LogIn, Globe } from 'lucide-react';
+import { Code2, LogIn, Globe, Terminal } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ProfileMenu from './ProfileMenu';
 
@@ -41,14 +41,16 @@ export default function NavBar({
 
                 {/* Navigation */}
                 <nav className="flex items-center gap-3 sm:gap-4">
+                    
                     {/* Community button */}
                     {showCommunityButton && !isCommunityPage && (
                         <Link
                             to="/community"
-                            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-200 border border-gray-700/30 shadow-sm hover:shadow transition-all"
+                            className="flex items-center gap-2 px-3.5 py-1.5 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-200 border border-gray-700/30 shadow-sm hover:shadow transition-all"
+                            aria-label="Community"
                         >
                             <Globe className="w-4 h-4" />
-                            <span>Community</span>
+                            <span className="hidden sm:inline">Community</span>
                         </Link>
                     )}
 
@@ -62,9 +64,11 @@ export default function NavBar({
                             {showCompilerButton && !isCompilerPage && (
                                 <Link
                                     to="/compiler"
-                                    className="px-4 py-1.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
+                                    className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
+                                    aria-label="Compiler"
                                 >
-                                    {isHomePage ? "Launch Compiler" : "Compiler"}
+                                    <Terminal className="w-4 h-4" />
+                                    <span className="hidden sm:inline">{isHomePage ? "Launch Compiler" : "Compiler"}</span>
                                 </Link>
                             )}
 
@@ -77,19 +81,22 @@ export default function NavBar({
                             {/* Login button */}
                             <Link
                                 to="/auth"
-                                className="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-100 transition-all border border-gray-700/30 shadow-sm hover:shadow"
+                                className="flex items-center gap-2 px-4 py-1.5 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-100 transition-all border border-gray-700/30 shadow-sm hover:shadow"
+                                aria-label="Login"
                             >
                                 <LogIn className="w-4 h-4" />
-                                <span>Login</span>
+                                <span className="hidden sm:inline">Login</span>
                             </Link>
 
                             {/* Compiler button */}
                             {showCompilerButton && !isCompilerPage && (
                                 <Link
                                     to="/compiler"
-                                    className="px-4 py-1.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
+                                    className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
+                                    aria-label="Compiler"
                                 >
-                                    {isHomePage ? "Launch Compiler" : "Compiler"}
+                                    <Terminal className="w-4 h-4" />
+                                    <span className="hidden sm:inline">{isHomePage ? "Launch Compiler" : "Compiler"}</span>
                                 </Link>
                             )}
                         </>
