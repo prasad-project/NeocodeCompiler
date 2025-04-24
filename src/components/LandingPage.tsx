@@ -645,7 +645,7 @@ function Footer() {
     return (
         <footer className="py-12 px-4">
             <div className="max-w-7xl mx-auto">
-                <div className="bg-gray-800/30 backdrop-blur-md rounded-2xl border border-purple-900/40 shadow-lg overflow-hidden hover:shadow-purple-600/10 transition-all">
+                <div className="bg-gray-800/30 backdrop-blur-md rounded-2xl border border-purple-900/40 shadow-lg overflow-hidden">
                     <div className="grid md:grid-cols-3 gap-8 p-8">
                         {/* Company Info */}
                         <div className="space-y-4">
@@ -661,45 +661,45 @@ function Footer() {
                             </p>
                         </div>
 
-                           {/* Quick Links */}
-                           <div className="space-y-5">
-                                <h4 className="font-bold text-gray-200 text-lg">Quick Links</h4>
-                                <div className="grid grid-cols-2 gap-y-3 gap-x-6">
-                                    <Link to="/compiler" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
-                                        <Terminal className="w-4 h-4" />
-                                        <span>Compiler</span>
-                                    </Link>
-                                    <Link to="/community" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
-                                        <Globe className="w-4 h-4" />
-                                        <span>Community</span>
-                                    </Link>
-                                    <Link to="/auth" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
-                                        <User className="w-4 h-4" />
-                                        <span>Login</span>
-                                    </Link>
-                                    <Link to="/auth?tab=register" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
-                                        <Share className="w-4 h-4" />
-                                        <span>Register</span>
-                                    </Link>
-                                </div>
+                        {/* Quick Links */}
+                        <div className="space-y-5">
+                            <h4 className="font-bold text-gray-200 text-lg">Quick Links</h4>
+                            <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+                                <Link to="/compiler" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                    <Terminal className="w-4 h-4" />
+                                    <span>Compiler</span>
+                                </Link>
+                                <Link to="/community" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                    <Globe className="w-4 h-4" />
+                                    <span>Community</span>
+                                </Link>
+                                <Link to="/auth" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                    <User className="w-4 h-4" />
+                                    <span>Login</span>
+                                </Link>
+                                <Link to="/auth?tab=register" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                    <Share className="w-4 h-4" />
+                                    <span>Register</span>
+                                </Link>
                             </div>
+                        </div>
 
                         {/* Connect */}
                         <div className="space-y-4">
-                            <h4 className="font-bold text-gray-300">
-                                Made with ❤️ by <a href="https://deepakmodi.vercel.app" className="text-purple-400 hover:text-purple-500 transition-colors">Deepak Modi</a>
+                            <h4 className="font-semibold text-gray-300 text-center mb-4">
+                                💜 Developed by <a href="https://deepakmodi.vercel.app" className="text-purple-400 hover:text-purple-500 transition-colors">Deepak Modi</a>
                             </h4>
                             <div className="flex flex-col gap-2">
                                 <a
                                     href="#"
-                                    className="inline-flex items-center gap-2 px-3 py-1.5 w-auto rounded-full bg-red-950/40 text-red-400 border border-red-900 hover:bg-red-900/30 transition-all"
+                                    className="inline-flex items-center justify-center gap-2 px-3 py-1.5 w-40 rounded-full bg-red-950/40 text-red-400 border border-red-900 hover:bg-red-900/30 transition-all mx-auto"
                                 >
                                     <Bug className="w-4 h-4" />
                                     <span className="text-sm font-medium">Report Bug</span>
                                 </a>
                                 <a
                                     href="#"
-                                    className="inline-flex items-center gap-2 px-3 py-1.5 w-auto rounded-full bg-indigo-950/40 text-indigo-400 border border-indigo-900 hover:bg-indigo-900/30 transition-all"
+                                    className="inline-flex items-center justify-center gap-2 px-3 py-1.5 w-40 rounded-full bg-indigo-950/40 text-indigo-400 border border-indigo-900 hover:bg-indigo-900/30 transition-all mx-auto"
                                 >
                                     <Rocket className="w-4 h-4" />
                                     <span className="text-sm font-medium">Suggest Feature</span>
