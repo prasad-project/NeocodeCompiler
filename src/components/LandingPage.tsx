@@ -106,8 +106,8 @@ export default function LandingPage() {
             <NavBar showHomeButton={false} />
             <Hero />
             <LanguageShowcase />
-            <Features />
             <HowItWorks />
+            <Features />
             <Testimonials />
             <UserFeatures />
             <FAQ />
@@ -259,7 +259,15 @@ function Features() {
     return (
         <section className="py-16">
             <div className="max-w-7xl mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center mb-12">Key Features</h2>
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        Powerful <span className="text-purple-500">Features</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+                        Everything you need to code efficiently in one browser-based platform
+                    </p>
+                </div>                
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {features.map(({ icon, title, desc }) => (
                         <div key={title} className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all">
@@ -279,8 +287,11 @@ function LanguageShowcase() {
         <section className="py-16 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">Supported Languages</h2>
-                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        Supported <span className="text-purple-500">Languages</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
                         Write and execute code in multiple programming languages without leaving your browser
                     </p>
                 </div>
@@ -338,8 +349,11 @@ function HowItWorks() {
         <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">How It Works</h2>
-                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        How It <span className="text-purple-500">Works</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
                         Code, compile, and share in just a few clicks
                     </p>
                 </div>
@@ -398,8 +412,11 @@ function Testimonials() {
         <section className="py-16 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">What Users Say</h2>
-                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        What Users <span className="text-purple-500">Say</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
                         Join thousands of developers who trust NeoCompiler for their coding needs
                     </p>
                 </div>
@@ -471,10 +488,15 @@ function UserFeatures() {
     return (
         <section className="py-16 bg-gray-900/50">
             <div className="max-w-7xl mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center mb-6">Start Building Your Code Library</h2>
-                <p className="text-center text-lg text-gray-300 mb-12 max-w-2xl mx-auto">
-                    Create an account to save your code snippets, share them with others, and build a personal library of your coding journey.
-                </p>
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        Start Building Your <span className="text-purple-500">Code Library</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+                        Create an account to save your code snippets, share them with others, and build a personal library of your coding journey.
+                    </p>
+                </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
                     <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
@@ -527,8 +549,11 @@ function FAQ() {
         <section className="py-16 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
             <div className="max-w-4xl mx-auto px-4">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-                    <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        Frequently Asked <span className="text-purple-500">Questions</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
                         Got questions? We've got answers
                     </p>
                 </div>
