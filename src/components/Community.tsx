@@ -106,7 +106,7 @@ export default function Community() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
             {/* Replace the header with the NavBar component */}
-            <NavBar showCommunityButton={false} showHomeButton={true} />
+            <NavBar showCommunityButton={false} />
 
             {/* Main Content */}
             <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6">

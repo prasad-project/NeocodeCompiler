@@ -17,7 +17,7 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col">
       {/* Use NavBar instead of custom header */}
-      <NavBar showCompilerButton={false} showCommunityButton={false} />
+      <NavBar />
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6">

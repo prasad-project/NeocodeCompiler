@@ -6,7 +6,6 @@ import ProfileMenu from './ProfileMenu';
 
 type NavBarProps = {
     showCompilerButton?: boolean;
-    showHomeButton?: boolean;
     showCommunityButton?: boolean;
     additionalButtons?: React.ReactNode;
 };

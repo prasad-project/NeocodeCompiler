@@ -198,7 +198,6 @@ export default function Compiler() {
       {/* Header */}
       <NavBar 
         showCompilerButton={false}
-        showHomeButton={true}
         additionalButtons={currentUser ? SaveButton : undefined}
       />
 

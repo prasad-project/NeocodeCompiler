@@ -147,9 +147,7 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col">
             {/* Replace custom header with NavBar */}
-            <NavBar
-                showHomeButton={true}
-            />
+            <NavBar />
 
             <main className="flex-1 max-w-7xl mx-auto w-full p-6">
                 <div className="flex items-center justify-between mb-8">
