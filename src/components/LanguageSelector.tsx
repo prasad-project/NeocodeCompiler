@@ -20,15 +20,15 @@ export interface LanguageSelectorProps {
 
 // Language icons with their custom colors
 const languageIcons: Record<string, { icon: JSX.Element; color: string }> = {
-    java: { icon: <FaJava size={24} />, color: 'text-orange-400' },
-    cpp: { icon: <TbBrandCpp size={24} />, color: 'text-blue-400' },
-    c: { icon: <TbLetterC size={24} />, color: 'text-blue-500' },
-    python: { icon: <FaPython size={24} />, color: 'text-yellow-400' },
-    javascript: { icon: <SiJavascript size={24} />, color: 'text-yellow-300' },
-    typescript: { icon: <SiTypescript size={24} />, color: 'text-blue-400' },
-    go: { icon: <FaGolang size={24} />, color: 'text-cyan-400' },
-    rust: { icon: <FaRust size={24} />, color: 'text-orange-500' },
-    ruby: { icon: <DiRuby size={24} />, color: 'text-red-500' }
+    java: { icon: <FaJava size={30} />, color: 'text-orange-400' },
+    cpp: { icon: <TbBrandCpp size={30} />, color: 'text-blue-400' },
+    c: { icon: <TbLetterC size={30} />, color: 'text-blue-500' },
+    python: { icon: <FaPython size={30} />, color: 'text-yellow-400' },
+    javascript: { icon: <SiJavascript size={30} />, color: 'text-yellow-300' },
+    typescript: { icon: <SiTypescript size={30} />, color: 'text-blue-400' },
+    go: { icon: <FaGolang size={30} />, color: 'text-cyan-400' },
+    rust: { icon: <FaRust size={30} />, color: 'text-orange-500' },
+    ruby: { icon: <DiRuby size={30} />, color: 'text-red-500' }
 };
 
 export default function LanguageSelector({
@@ -37,7 +37,6 @@ export default function LanguageSelector({
     orientation = 'horizontal',
     className = '',
     maxHeight = '100%',
-    showTitle = true
 }: LanguageSelectorProps) {
     // Reference for the scrollable container
     const scrollerRef = useRef<HTMLDivElement>(null);

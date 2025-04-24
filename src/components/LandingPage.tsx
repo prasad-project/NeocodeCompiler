@@ -10,52 +10,70 @@ import { FaGolang } from "react-icons/fa6";
 import { TbBrandCpp, TbLetterC } from "react-icons/tb";
 import { DiRuby } from "react-icons/di";
 
-// Single consolidated constant for language data
+// Language data
 const supportedLanguages = [
-    { 
-        name: 'JavaScript', 
-        color: 'text-yellow-400',
-        icon: <SiJavascript className="w-6 h-6" />
-    },
-    { 
-        name: 'Python', 
-        color: 'text-blue-400',
-        icon: <FaPython className="w-6 h-6" /> 
-    },
-    { 
-        name: 'Java', 
+    {
+        id: 'java',
+        name: 'Java',
         color: 'text-orange-500',
-        icon: <FaJava className="w-6 h-6" /> 
+        icon: <FaJava className="w-16 h-16" />,
+        extension: 'java'
     },
-    { 
-        name: 'C++', 
+    {
+        id: 'cpp',
+        name: 'C++',
         color: 'text-blue-500',
-        icon: <TbBrandCpp className="w-6 h-6" /> 
+        icon: <TbBrandCpp className="w-16 h-16" />,
+        extension: 'cpp'
     },
-    { 
-        name: 'TypeScript', 
-        color: 'text-blue-600',
-        icon: <SiTypescript className="w-6 h-6" /> 
-    },
-    { 
-        name: 'Go', 
-        color: 'text-cyan-400',
-        icon: <FaGolang className="w-6 h-6" /> 
-    },
-    { 
-        name: 'Rust', 
-        color: 'text-orange-600',
-        icon: <FaRust className="w-6 h-6" /> 
-    },
-    { 
-        name: 'Ruby', 
-        color: 'text-red-500',
-        icon: <DiRuby className="w-8 h-8" /> 
-    },
-    { 
-        name: 'C', 
+    {
+        id: 'c',
+        name: 'C',
         color: 'text-blue-400',
-        icon: <TbLetterC className="w-6 h-6" /> 
+        icon: <TbLetterC className="w-16 h-16" />,
+        extension: 'c'
+    },
+    {
+        id: 'python',
+        name: 'Python',
+        color: 'text-yellow-400',
+        icon: <FaPython className="w-16 h-16" />,
+        extension: 'py'
+    },
+    {
+        id: 'javascript',
+        name: 'JavaScript',
+        color: 'text-yellow-400',
+        icon: <SiJavascript className="w-16 h-16" />,
+        extension: 'js'
+    },
+    {
+        id: 'typescript',
+        name: 'TypeScript',
+        color: 'text-blue-500',
+        icon: <SiTypescript className="w-16 h-16" />,
+        extension: 'ts'
+    },
+    {
+        id: 'go',
+        name: 'Go',
+        color: 'text-cyan-400',
+        icon: <FaGolang className="w-16 h-16" />,
+        extension: 'go'
+    },
+    {
+        id: 'rust',
+        name: 'Rust',
+        color: 'text-orange-500',
+        icon: <FaRust className="w-16 h-16" />,
+        extension: 'rs'
+    },
+    {
+        id: 'ruby',
+        name: 'Ruby',
+        color: 'text-red-500',
+        icon: <DiRuby className="w-16 h-16" />,
+        extension: 'rb'
     },
 ];
 
@@ -162,7 +180,7 @@ function Hero() {
 
                     {/* Features */}
                     <div className="mt-20 grid grid-cols-4 gap-4 max-w-lg w-full">
-                        {[ 
+                        {[
                             { icon: <Globe className="w-6 h-6 text-purple-400" />, label: "9+ Languages" },
                             { icon: <Save className="w-6 h-6 text-purple-400" />, label: "Save Snippets" },
                             { icon: <Bot className="w-6 h-6 text-purple-400" />, label: "AI Assistant" },
@@ -271,15 +289,25 @@ function LanguageShowcase() {
                     {supportedLanguages.map((lang) => (
                         <div
                             key={lang.name}
-                            className="flex flex-col items-center p-4 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all hover:scale-105 hover:shadow-lg hover:shadow-purple-500/10"
+                            className="flex flex-col items-center p-4 rounded-xl transition-all hover:scale-105 group"
                         >
-                            <div className={`w-12 h-12 flex items-center justify-center bg-gray-900/70 rounded-full mb-3 ${lang.color}`}>
-                                {lang.icon}
+                            <div className="relative mb-3">
+                                {/* Icon with gradient background */}
+                                <div className={`w-24 h-24 flex items-center justify-center rounded-lg 
+                                bg-gradient-to-br from-purple-800/80 to-indigo-900/90 shadow-lg shadow-purple-800/30
+                                hover:shadow-purple-600/30 transition-all duration-300 ${lang.color}`}>
+                                    {lang.icon}
+                                </div>
+
+                                {/* File extension badge */}
+                                <div className="absolute -bottom-1 -right-1 min-w-[20px] h-[20px] flex items-center justify-center rounded-full 
+                                bg-purple-500 text-white text-xs font-mono px-1.5">
+                                    {lang.extension}
+                                </div>
                             </div>
-                            <span className="text-sm font-medium">{lang.name}</span>
+                            <span className="font-medium mt-1">{lang.name}</span>
                         </div>
                     ))}
-
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-4 mt-10">
@@ -317,7 +345,7 @@ function HowItWorks() {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
-                    {[ 
+                    {[
                         {
                             step: "1",
                             title: "Select a Language",
@@ -377,7 +405,7 @@ function Testimonials() {
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                    {[ 
+                    {[
                         {
                             quote: "NeoCompiler has completely transformed how I teach programming to my students. The ability to share code snippets has made remote learning so much easier.",
                             name: "Sarah Johnson",
@@ -506,7 +534,7 @@ function FAQ() {
                 </div>
 
                 <div className="space-y-3">
-                    {[ 
+                    {[
                         {
                             question: "Is NeoCompiler free to use?",
                             answer: "Yes, NeoCompiler is completely free for individual use. Create an account to access additional features like saving and sharing code snippets."
