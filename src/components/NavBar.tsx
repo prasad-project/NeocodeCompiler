@@ -25,25 +25,27 @@ export default function NavBar({
     const isCommunityPage = location.pathname === '/community';
 
     return (
-        <header className="backdrop-blur-sm bg-gray-900/80 border-b border-purple-900/40 shadow-sm px-6 py-4 sticky top-0 z-20">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <header className="sticky top-0 z-20 pt-4">
+            <div className="max-w-7xl mx-auto bg-gray-900/75 backdrop-blur-md rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-900/15 px-5 py-2 flex items-center justify-between transition-all duration-300 hover:shadow-purple-800/10">
                 {/* Logo and Title */}
                 <div className="flex items-center gap-3">
-                    <Link to="/" className="flex items-center gap-3">
-                        <Code2 className="w-7 h-7 text-purple-400" />
-                        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-purple-400 to-violet-500 bg-clip-text text-transparent">
+                    <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                        <div className="bg-gradient-to-r from-purple-600 to-violet-700 rounded-xl p-2 shadow-sm shadow-purple-500/15">
+                            <Code2 className="w-6 h-6 text-white" />
+                        </div>
+                        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-br from-purple-400 via-violet-400 to-purple-500 bg-clip-text text-transparent">
                             NeoCompiler
                         </h1>
                     </Link>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex items-center gap-2 sm:gap-4">
+                <nav className="flex items-center gap-3 sm:gap-4">
                     {/* Community button */}
                     {showCommunityButton && !isCommunityPage && (
                         <Link
                             to="/community"
-                            className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-gray-200 transition-colors"
+                            className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-200 border border-gray-700/30 shadow-sm hover:shadow transition-all"
                         >
                             <Globe className="w-4 h-4" />
                             <span>Community</span>
@@ -60,9 +62,9 @@ export default function NavBar({
                             {showCompilerButton && !isCompilerPage && (
                                 <Link
                                     to="/compiler"
-                                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-all"
+                                    className="px-4 py-1.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
                                 >
-                                    {isHomePage ? "Launch Compiler" : "Launch Compiler"}
+                                    {isHomePage ? "Launch Compiler" : "Compiler"}
                                 </Link>
                             )}
 
@@ -75,19 +77,19 @@ export default function NavBar({
                             {/* Login button */}
                             <Link
                                 to="/auth"
-                                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white transition-all"
+                                className="hidden sm:flex items-center gap-2 px-4 py-1.5 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-100 transition-all border border-gray-700/30 shadow-sm hover:shadow"
                             >
                                 <LogIn className="w-4 h-4" />
-                                <span>Login / Register</span>
+                                <span>Login</span>
                             </Link>
 
                             {/* Compiler button */}
                             {showCompilerButton && !isCompilerPage && (
                                 <Link
                                     to="/compiler"
-                                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-all"
+                                    className="px-4 py-1.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
                                 >
-                                    {isHomePage ? "Launch Compiler" : "Launch Compiler"}
+                                    {isHomePage ? "Launch Compiler" : "Compiler"}
                                 </Link>
                             )}
                         </>

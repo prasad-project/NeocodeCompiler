@@ -231,7 +231,7 @@ export default function Compiler() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 mx-auto w-full p-2 sm:p-8">
+      <main className="flex-1 mx-auto w-full p-2 sm:p-6">
         {/* Mobile Language Selector - Horizontal scrollable */}
         <div className="block md:hidden mb-4">
           <LanguageSelector
