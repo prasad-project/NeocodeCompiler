@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Terminal, Zap, Sparkles, Bot, Code, Code2, ArrowRight, Globe, Save, Share, User, Lock, ChevronDown, Check, Laptop } from 'lucide-react';
+import { Terminal, Zap, Sparkles, Bot, Code, Code2, ArrowRight, Globe, Save, Share, User, Lock, ChevronDown, Check, Laptop, Bug, Rocket, LucideGithub } from 'lucide-react';
 import NavBar from './NavBar';
 import { useState } from 'react';
 
@@ -643,32 +643,76 @@ function FAQ() {
 
 function Footer() {
     return (
-        <footer className="py-5 border-t border-purple-900/40 bg-gray-900/90 backdrop-blur-sm">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="text-gray-400">
-                        <div className="flex items-center gap-2 mb-2">
-                            <Code2 className="w-5 h-5 text-purple-500" />
-                            <span className="font-medium text-gray-300">NeoCompiler</span>
+        <footer className="py-12 px-4">
+            <div className="max-w-7xl mx-auto">
+                <div className="bg-gray-800/30 backdrop-blur-md rounded-2xl border border-purple-900/40 shadow-lg overflow-hidden hover:shadow-purple-600/10 transition-all">
+                    <div className="grid md:grid-cols-3 gap-8 p-8">
+                        {/* Company Info */}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                                <Code2 className="w-6 h-6 text-purple-500" />
+                                <h3 className="font-semibold text-xl text-white">NeoCompiler</h3>
+                            </div>
+                            <p className="text-gray-300">
+                                A modern, feature-rich online code editor and compiler with AI assistance.
+                            </p>
+                            <p className="text-sm text-gray-400">
+                                © {new Date().getFullYear()} NeoCompiler. All rights reserved.
+                            </p>
                         </div>
-                        <p className="text-sm text-gray-500">© {new Date().getFullYear()} NeoCompiler. All rights reserved.</p>
-                        <p className="text-sm text-gray-500">Developed by <a href="https://deepakmodi.vercel.app" className="text-purple-400 hover:text-purple-300 transition-colors">Deepak Modi</a></p>
+
+                           {/* Quick Links */}
+                           <div className="space-y-5">
+                                <h4 className="font-bold text-gray-200 text-lg">Quick Links</h4>
+                                <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+                                    <Link to="/compiler" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                        <Terminal className="w-4 h-4" />
+                                        <span>Compiler</span>
+                                    </Link>
+                                    <Link to="/community" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                        <Globe className="w-4 h-4" />
+                                        <span>Community</span>
+                                    </Link>
+                                    <Link to="/auth" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                        <User className="w-4 h-4" />
+                                        <span>Login</span>
+                                    </Link>
+                                    <Link to="/auth?tab=register" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
+                                        <Share className="w-4 h-4" />
+                                        <span>Register</span>
+                                    </Link>
+                                </div>
+                            </div>
+
+                        {/* Connect */}
+                        <div className="space-y-4">
+                            <h4 className="font-bold text-gray-300">
+                                Made with ❤️ by <a href="https://deepakmodi.vercel.app" className="text-purple-400 hover:text-purple-500 transition-colors">Deepak Modi</a>
+                            </h4>
+                            <div className="flex flex-col gap-2">
+                                <a
+                                    href="#"
+                                    className="inline-flex items-center gap-2 px-3 py-1.5 w-auto rounded-full bg-red-950/40 text-red-400 border border-red-900 hover:bg-red-900/30 transition-all"
+                                >
+                                    <Bug className="w-4 h-4" />
+                                    <span className="text-sm font-medium">Report Bug</span>
+                                </a>
+                                <a
+                                    href="#"
+                                    className="inline-flex items-center gap-2 px-3 py-1.5 w-auto rounded-full bg-indigo-950/40 text-indigo-400 border border-indigo-900 hover:bg-indigo-900/30 transition-all"
+                                >
+                                    <Rocket className="w-4 h-4" />
+                                    <span className="text-sm font-medium">Suggest Feature</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <a
-                            href="https://github.com/deepakmodi/neo-compiler"
-                            className="flex items-center gap-2 px-5 py-2.5 bg-gray-800/80 hover:bg-gray-700 border border-purple-900/30 hover:border-purple-500/50 rounded-lg transition-all shadow-sm hover:shadow-purple-900/20"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">
-                                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-                            </svg>
-                            <span>Star on GitHub</span>
-                        </a>
-                    </div>
+
+                    {/* Bottom border with gradient line */}
+                    <div className="h-1.5 bg-gradient-to-r from-purple-600/50 via-violet-600/70 to-indigo-600/50"></div>
                 </div>
             </div>
         </footer>
+
     );
 }
