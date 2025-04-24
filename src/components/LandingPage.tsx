@@ -5,10 +5,9 @@ import { useState } from 'react';
 
 // Import language icons
 import { FaJava, FaPython, FaRust } from "react-icons/fa";
-import { SiJavascript, SiTypescript } from "react-icons/si";
 import { FaGolang } from "react-icons/fa6";
-import { TbBrandCpp, TbLetterC } from "react-icons/tb";
 import { DiRuby } from "react-icons/di";
+import { SiJavascript, SiTypescript, SiCplusplus, SiCoursera , SiGithub } from "react-icons/si";
 
 // Language data
 const supportedLanguages = [
@@ -23,14 +22,14 @@ const supportedLanguages = [
         id: 'cpp',
         name: 'C++',
         color: 'text-blue-500',
-        icon: <TbBrandCpp className="w-16 h-16" />,
+        icon: <SiCplusplus className="w-16 h-16" />,
         extension: 'cpp'
     },
     {
         id: 'c',
         name: 'C',
         color: 'text-blue-400',
-        icon: <TbLetterC className="w-16 h-16" />,
+        icon: <SiCoursera className="w-16 h-16" />,
         extension: 'c'
     },
     {
@@ -643,7 +642,7 @@ function FAQ() {
 
 function Footer() {
     return (
-        <footer className="py-12 px-4">
+        <footer className="py-12 px-4 bg-gray-950">
             <div className="max-w-7xl mx-auto">
                 <div className="bg-gray-800/30 backdrop-blur-md rounded-2xl border border-purple-900/40 shadow-lg overflow-hidden">
                     <div className="grid md:grid-cols-3 gap-8 p-8">
@@ -713,6 +712,5 @@ function Footer() {
                 </div>
             </div>
         </footer>
-
     );
 }
