@@ -2,10 +2,11 @@ import Editor from '@monaco-editor/react';
 import { Play, RotateCcw, Loader2, Settings, Download, Share2, Palette, Type } from 'lucide-react';
 import {
   EDITOR_THEMES,
-  EDITOR_OPTIONS
+  EDITOR_OPTIONS,
+  SUPPORTED_LANGUAGES
 } from '../constants/editorConfig';
 import { useCodeEditor } from '../hooks/useCodeEditor';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface CodeEditorProps {
   onExecute: (code: string, language: string, version: string, input: string) => Promise<void>;
@@ -41,6 +42,19 @@ export default function CodeEditor({
     // Pass the editor instance to parent via onEditorMount
     onEditorMount
   );
+  
+  // Keep local state in sync with parent props
+  const [currentLang, setCurrentLang] = useState(selectedLanguage);
+  
+  // Update local state when parent prop changes
+  useEffect(() => {
+    if (selectedLanguageId !== currentLang.id) {
+      const newLang = SUPPORTED_LANGUAGES.find(lang => lang.id === selectedLanguageId);
+      if (newLang) {
+        setCurrentLang(newLang);
+      }
+    }
+  }, [selectedLanguageId, currentLang.id]);
 
   const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
   const [isFontSizeMenuOpen, setIsFontSizeMenuOpen] = useState(false);
@@ -48,8 +62,14 @@ export default function CodeEditor({
   const handleExecute = async () => {
     const code = getCurrentCode();
     if (code) {
-      localStorage.setItem(`code-${selectedLanguage.id}`, code);
-      await onExecute(code, selectedLanguage.id, selectedLanguage.version, customInput);
+      // Get the most up-to-date selected language
+      const lang = SUPPORTED_LANGUAGES.find(lang => lang.id === selectedLanguageId) || selectedLanguage;
+      
+      console.log(`CodeEditor executing with language: ${lang.name} (${lang.id})`);
+      localStorage.setItem(`code-${lang.id}`, code);
+      
+      // Use the parent's selectedLanguageId to ensure sync with parent component
+      await onExecute(code, lang.id, lang.version, customInput);
     }
   };
 

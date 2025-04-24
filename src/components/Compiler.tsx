@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Save } from 'lucide-react';
 import { Link, useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import CodeEditor from './CodeEditor';
@@ -36,6 +36,14 @@ export default function Compiler() {
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [loadingSnippet, setLoadingSnippet] = useState(false);
   const [loadingError, setLoadingError] = useState<string | null>(null);
+  
+  // Keep track of the actual current language ID
+  const currentLanguageRef = useRef(selectedLanguageId);
+  
+  // Update ref when selected language changes
+  useEffect(() => {
+    currentLanguageRef.current = selectedLanguageId;
+  }, [selectedLanguageId]);
 
   // Effect to check if we need to load a snippet from query params or shared link
   useEffect(() => {
@@ -90,13 +98,27 @@ export default function Compiler() {
     }
   }, [searchParams, linkId, editorInstance]);
 
-  const handleExecute = async (code: string, language: string, version: string, input: string) => {
+  const handleExecute = useCallback(async (code: string, language: string, version: string, input: string) => {
     setIsExecuting(true);
     setError(undefined);
     setOutput('');
 
     try {
-      const result = await executeCode(code, language, version, input);
+      // Always use the most recent language ID from state
+      const currentLangId = currentLanguageRef.current;
+      
+      // Get the currently selected language info to ensure consistency
+      const currentLang = SUPPORTED_LANGUAGES.find(lang => lang.id === currentLangId);
+      
+      if (!currentLang) {
+        throw new Error(`Invalid language selected: ${currentLangId}`);
+      }
+      
+      console.log(`Executing code in ${currentLang.name} (${currentLang.id})`);
+      
+      // Use the current language info from state, not the one passed from CodeEditor
+      const result = await executeCode(code, currentLang.id, currentLang.version, input);
+      
       if (result.error) {
         setError(result.error);
       } else {
@@ -107,12 +129,22 @@ export default function Compiler() {
     } finally {
       setIsExecuting(false);
     }
-  };
+  }, []);
 
-  const handleLanguageChange = (langId: string) => {
-    setSelectedLanguageId(langId);
-    localStorage.setItem('selected-language', langId);
-  };
+  const handleLanguageChange = useCallback((langId: string) => {
+    // Find the language info to ensure we're setting a valid language
+    const newLang = SUPPORTED_LANGUAGES.find(lang => lang.id === langId);
+    if (!newLang) {
+      console.error(`Invalid language ID: ${langId}`);
+      return;
+    }
+    
+    console.log(`Switching language to: ${newLang.name} (${newLang.id})`);
+    setSelectedLanguageId(newLang.id);
+    // Also update the reference for immediate access
+    currentLanguageRef.current = newLang.id;
+    localStorage.setItem('selected-language', newLang.id);
+  }, []);
 
   const languageIcons: Record<string, { icon: JSX.Element }> = {
     java: { icon: <FaJava size={30} /> },

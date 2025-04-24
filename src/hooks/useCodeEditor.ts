@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { SUPPORTED_LANGUAGES, EDITOR_THEMES, DEFAULT_CODE } from '../constants/editorConfig';
 
 // Add type declaration for window
@@ -15,36 +15,56 @@ export function useCodeEditor(
 ) {
     const editorRef = useRef<any>(null);
     const monacoRef = useRef<any>(null);
+    const previousLanguageRef = useRef<string | null>(null);
 
     // 🔁 Load selected language from localStorage or default to Java
     const [selectedLanguage, setSelectedLanguage] = useState(() => {
         // If an external language ID is provided, use it
         if (externalLanguageId) {
             const lang = SUPPORTED_LANGUAGES.find((lang) => lang.id === externalLanguageId);
-            if (lang) return lang;
+            if (lang) {
+                previousLanguageRef.current = lang.id;
+                return lang;
+            }
         }
         
         // Otherwise use localStorage
         const savedLangId = localStorage.getItem('selected-language');
         const lang = SUPPORTED_LANGUAGES.find((lang) => lang.id === savedLangId);
-        return lang || SUPPORTED_LANGUAGES[0];
+        if (lang) {
+            previousLanguageRef.current = lang.id;
+            return lang;
+        }
+        
+        // Default to first language in the list
+        previousLanguageRef.current = SUPPORTED_LANGUAGES[0].id;
+        return SUPPORTED_LANGUAGES[0];
     });
 
-    // Listen for changes to externalLanguageId prop
+    // Listen for changes to externalLanguageId prop - critical for syncing language state
     useEffect(() => {
         if (externalLanguageId && externalLanguageId !== selectedLanguage.id) {
+            console.log(`Language change detected in useCodeEditor: ${externalLanguageId} (previous: ${selectedLanguage.id})`);
+            
             const newLang = SUPPORTED_LANGUAGES.find((lang) => lang.id === externalLanguageId);
-            if (!newLang) return;
+            if (!newLang) {
+                console.error(`Invalid language ID received: ${externalLanguageId}`);
+                return;
+            }
             
             setSelectedLanguage(newLang);
+            previousLanguageRef.current = newLang.id;
             
             // Update editor's language when it's mounted
             if (editorRef.current && monacoRef.current) {
-                // Set default code for the language
+                // Set default code for the language if there's no saved code
+                const savedCode = localStorage.getItem(`code-${newLang.id}`);
                 const defaultCode = DEFAULT_CODE[newLang.id] || '';
-                editorRef.current.setValue(defaultCode);
+                const codeToSet = savedCode || defaultCode;
                 
-                // Update the editor language
+                editorRef.current.setValue(codeToSet);
+                
+                // Update the editor language model
                 if (editorRef.current.getModel()) {
                     monacoRef.current.editor.setModelLanguage(
                         editorRef.current.getModel(),
@@ -68,22 +88,43 @@ export function useCodeEditor(
 
     const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
 
-    const handleLanguageChange = (langId: string) => {
+    const handleLanguageChange = useCallback((langId: string) => {
+        console.log(`Changing language in useCodeEditor to: ${langId}`);
+        
+        if (langId === selectedLanguage.id) {
+            console.log('Language already selected, no change needed');
+            return; // Already selected
+        }
+        
         const newLang = SUPPORTED_LANGUAGES.find((lang) => lang.id === langId);
-        if (!newLang) return;
+        if (!newLang) {
+            console.error(`Invalid language ID in handleLanguageChange: ${langId}`);
+            return;
+        }
+
+        // Update previous language ref
+        previousLanguageRef.current = newLang.id;
 
         setSelectedLanguage(newLang);
         localStorage.setItem('selected-language', newLang.id); // Save to localStorage
 
-        // Always reset to default code when switching languages, even if returning to a previously used language
-        const defaultCode = DEFAULT_CODE[newLang.id];
-        editorRef.current?.setValue(defaultCode);
-        
-        // Reset the localStorage saved code for this language
-        localStorage.setItem(`code-${newLang.id}`, defaultCode);
-        
-        editorRef.current?.getModel()?.setLanguage(newLang.id);
-    };
+        if (editorRef.current) {
+            // Get saved code for this language or use default
+            const savedCode = localStorage.getItem(`code-${newLang.id}`);
+            const defaultCode = DEFAULT_CODE[newLang.id] || '';
+            const codeToSet = savedCode || defaultCode;
+            
+            editorRef.current.setValue(codeToSet);
+            
+            // Update model language
+            if (monacoRef.current && editorRef.current.getModel()) {
+                monacoRef.current.editor.setModelLanguage(
+                    editorRef.current.getModel(),
+                    newLang.id
+                );
+            }
+        }
+    }, [selectedLanguage.id]);
 
     const handleThemeChange = (theme: (typeof EDITOR_THEMES)[number]) => {
         setSelectedTheme(theme);
