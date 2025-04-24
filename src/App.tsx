@@ -16,6 +16,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/compiler" element={<Compiler />} />
+          <Route path="/compiler/:linkId" element={<Compiler />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/community" element={<Community />} />
           

@@ -1,24 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Play, ArrowLeft, Copy, Check, ThumbsUp } from 'lucide-react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Play, ArrowLeft, Copy, Check, ThumbsUp, ExternalLink } from 'lucide-react';
 import { getCodeSnippetByShareableLink, incrementSnippetViews, incrementSnippetLikes } from '../services/codeSnippets';
-import { executeCode } from '../services/codeExecution';
 import { CodeSnippet } from '../types';
-import CodeEditor from './CodeEditor';
-import OutputPanel from './OutputPanel';
 import NavBar from './NavBar';
 
 export default function SharedSnippet() {
   const { linkId } = useParams<{ linkId: string }>();
+  const navigate = useNavigate();
 
   const [snippet, setSnippet] = useState<CodeSnippet | null>(null);
-  const [code, setCode] = useState('');
-  const [output, setOutput] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [customInput, setCustomInput] = useState('');
-  const [isRunning, setIsRunning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -56,7 +49,6 @@ export default function SharedSnippet() {
         }
         
         setSnippet(snippetData);
-        setCode(snippetData.code);
         
         // Set liked state from localStorage
         const likedSnippets = JSON.parse(localStorage.getItem('likedSnippets') || '[]');
@@ -75,31 +67,24 @@ export default function SharedSnippet() {
     fetchSnippet();
   }, [linkId]);
 
-  // Run the code
-  const handleRunCode = async () => {
-    if (!snippet || !code) return;
-    
-    setIsRunning(true);
-    setOutput('');
-    setError(null);
-
-    try {
-      const result = await executeCode(code, snippet.language, snippet.version || 'latest', customInput);
-      setOutput(result.output);
-      if (result.error) {
-        setError(result.error);
+  // Open in compiler
+  const handleOpenInCompiler = () => {
+    if (snippet) {
+      // Use the actual linkId from URL params to ensure proper loading in the compiler
+      if (linkId) {
+        navigate(`/compiler/${linkId}`);
+      } else if (snippet.shareableLink) {
+        navigate(`/compiler/${snippet.shareableLink}`);
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred while executing the code");
-    } finally {
-      setIsRunning(false);
     }
   };
 
   // Copy code to clipboard
   const handleCopyCode = async () => {
+    if (!snippet?.code) return;
+    
     try {
-      await navigator.clipboard.writeText(code);
+      await navigator.clipboard.writeText(snippet.code);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
@@ -186,7 +171,6 @@ export default function SharedSnippet() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col">
-      {/* Replace header with NavBar */}
       <NavBar showHomeButton={true} />
 
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6">
@@ -219,34 +203,13 @@ export default function SharedSnippet() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {/* Run button */}
+            {/* Run in Compiler button */}
             <button
-              onClick={handleRunCode}
-              disabled={isRunning}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg ${
-                isRunning
-                  ? 'bg-purple-700/50 text-purple-300'
-                  : 'bg-purple-600 text-white hover:bg-purple-700'
-              } transition-colors font-medium`}
+              onClick={handleOpenInCompiler}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors font-medium"
             >
-              {isRunning ? (
-                <>
-                  <svg className="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  <span>Running...</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-5 h-5" />
-                  <span>Run Code</span>
-                </>
-              )}
+              <Play className="w-5 h-5" />
+              <span>Run in Compiler</span>
             </button>
 
             {/* Copy button */}
@@ -309,9 +272,8 @@ export default function SharedSnippet() {
           </div>
         </div>
 
-        {/* Code editor & output */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Code Editor */}
+        {/* Code Display */}
+        <div className="mb-8">
           <div className="overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
             <div className="bg-gray-800/90 flex justify-between items-center px-4 py-2 border-b border-gray-800">
               <div className="flex items-center space-x-2">
@@ -323,32 +285,11 @@ export default function SharedSnippet() {
                 {snippet.language}
               </div>
             </div>
-            <div className="h-[400px]">
-              <CodeEditor 
-                onExecute={handleRunCode}
-                isExecuting={isRunning}
-                customInput={customInput}
-                selectedLanguageId={snippet.language}
-              />
-            </div>
-          </div>
-
-          {/* Output Panel */}
-          <div>
-            <div className="rounded-lg border border-gray-800 bg-gray-900 h-full">
-              <div className="bg-gray-800/90 px-4 py-2 border-b border-gray-800">
-                <h3 className="text-sm font-medium">Output</h3>
-              </div>
-              <div className="h-[400px]">
-                <OutputPanel 
-                  output={output || ""} 
-                  error={error || undefined}
-                  customInput={customInput}
-                  onInputChange={(input) => setCustomInput(input)}
-                  isExecuting={isRunning} 
-                />
-              </div>
-            </div>
+            <pre className="p-4 overflow-x-auto max-h-[400px] font-mono text-sm whitespace-pre-wrap">
+              <code className="language-{snippet.language}">
+                {snippet.code}
+              </code>
+            </pre>
           </div>
         </div>
         
