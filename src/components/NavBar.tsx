@@ -26,12 +26,12 @@ export default function NavBar({
 
     return (
         <header className="sticky top-0 z-20 pt-4">
-            <div className="max-w-7xl mx-auto bg-gray-900/75 backdrop-blur-md rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-900/15 px-5 py-2 flex items-center justify-between transition-all duration-300 hover:shadow-purple-800/10">
+            <div className="max-w-7xl sm:mx-auto mx-2 bg-gray-900/75 backdrop-blur-md rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-900/15 px-5 py-2 flex items-center justify-between transition-all duration-300 hover:shadow-purple-800/10">
                 {/* Logo and Title */}
                 <div className="flex items-center gap-3">
                     <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
                         <div className="bg-gradient-to-r from-purple-600 to-violet-700 rounded-xl p-2 shadow-sm shadow-purple-500/15">
-                            <Code2 className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+                            <Code2 className="w-6 h-6 text-white" />
                         </div>
                         <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-br from-purple-400 via-violet-400 to-purple-500 bg-clip-text text-transparent">
                             NeoCompiler
@@ -49,7 +49,7 @@ export default function NavBar({
                             className="flex items-center gap-2 p-2 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-200 border border-gray-700/30 shadow-sm hover:shadow transition-all"
                             aria-label="Community"
                         >
-                            <Globe className="w-4 h-4" />
+                            <Globe className="w-6 h-6" />
                             <span className="hidden sm:inline">Community</span>
                         </Link>
                     )}
@@ -67,7 +67,7 @@ export default function NavBar({
                                     className="flex items-center gap-2 p-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
                                     aria-label="Compiler"
                                 >
-                                    <Terminal className="w-4 h-4" />
+                                    <Terminal className="w-6 h-6" />
                                     <span className="hidden sm:inline">{isHomePage ? "Launch Compiler" : "Compiler"}</span>
                                 </Link>
                             )}
@@ -84,7 +84,7 @@ export default function NavBar({
                                 className="flex items-center gap-2 p-2 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-100 transition-all border border-gray-700/30 shadow-sm hover:shadow"
                                 aria-label="Login"
                             >
-                                <LogIn className="w-4 h-4" />
+                                <LogIn className="w-6 h-6" />
                                 <span className="hidden sm:inline">Login</span>
                             </Link>
 
@@ -95,7 +95,7 @@ export default function NavBar({
                                     className="flex items-center gap-2 p-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-xl text-white font-medium transition-all shadow-md shadow-purple-600/15 hover:shadow-purple-600/25 border border-purple-500/40"
                                     aria-label="Compiler"
                                 >
-                                    <Terminal className="w-4 h-4" />
+                                    <Terminal className="w-6 h-6" />
                                     <span className="hidden sm:inline">{isHomePage ? "Launch Compiler" : "Compiler"}</span>
                                 </Link>
                             )}
