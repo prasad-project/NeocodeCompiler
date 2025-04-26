@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Code2, ArrowLeft, Share2, Edit, Trash2, Copy, Check, ExternalLink, Globe, Lock } from 'lucide-react';
+import { ArrowLeft, Share2, Edit, Trash2, Copy, Check, ExternalLink, Globe, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getCodeSnippet, deleteCodeSnippet, updateCodeSnippetVisibility, incrementSnippetViews } from '../services/codeSnippets';
 import { CodeSnippet } from '../types';
+import CodeSnippetViewer from './ui/CodeSnippetViewer';
+import NavBar from './NavBar';
 
 export default function SnippetDetail() {
   const { snippetId } = useParams<{ snippetId: string }>();
@@ -29,22 +31,22 @@ export default function SnippetDetail() {
 
       try {
         const snippetData = await getCodeSnippet(snippetId);
-        
+
         // Check if user has permission to view this snippet
         if (snippetData.userId !== currentUser.uid) {
           setError("You don't have permission to view this snippet");
           return;
         }
-        
+
         setSnippet(snippetData);
         setIsPublic(snippetData.isPublic || false);
-        
+
         // Generate share URL if available
         if (snippetData.shareableLink) {
           const baseUrl = window.location.origin;
           setShareUrl(`${baseUrl}/shared/${snippetData.shareableLink}`);
         }
-        
+
         // Increment view count
         await incrementSnippetViews(snippetId);
       } catch (err: any) {
@@ -65,7 +67,7 @@ export default function SnippetDetail() {
     }
 
     setIsDeleting(true);
-    
+
     try {
       await deleteCodeSnippet(snippet.id);
       navigate('/dashboard');
@@ -80,7 +82,7 @@ export default function SnippetDetail() {
   // Handle copying share link to clipboard
   const handleCopyShareLink = async () => {
     if (!shareUrl) return;
-    
+
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopySuccess(true);
@@ -93,18 +95,18 @@ export default function SnippetDetail() {
   // Handle toggling snippet visibility (public/private)
   const handleToggleVisibility = async () => {
     if (!snippet) return;
-    
+
     setIsUpdatingVisibility(true);
-    
+
     try {
       // Toggle visibility
       const newVisibility = !isPublic;
       const updatedSnippet = await updateCodeSnippetVisibility(snippet.id, newVisibility);
-      
+
       // Update state
       setSnippet(updatedSnippet);
       setIsPublic(newVisibility);
-      
+
       // Update share URL if visibility is changed to public
       if (newVisibility && updatedSnippet.shareableLink) {
         const baseUrl = window.location.origin;
@@ -147,7 +149,7 @@ export default function SnippetDetail() {
         <div className="bg-red-900/20 border border-red-800 rounded-lg p-6 max-w-md w-full">
           <h2 className="text-xl font-semibold text-white mb-2">Error</h2>
           <p className="text-red-400 mb-4">{error}</p>
-          <Link 
+          <Link
             to="/dashboard"
             className="text-purple-400 hover:text-purple-300 inline-flex items-center gap-1"
           >
@@ -165,7 +167,7 @@ export default function SnippetDetail() {
         <div className="bg-gray-800/80 border border-gray-700 rounded-lg p-6 max-w-md w-full">
           <h2 className="text-xl font-semibold text-white mb-2">Snippet Not Found</h2>
           <p className="text-gray-400 mb-4">The snippet you're looking for could not be found.</p>
-          <Link 
+          <Link
             to="/dashboard"
             className="text-purple-400 hover:text-purple-300 inline-flex items-center gap-1"
           >
@@ -177,40 +179,27 @@ export default function SnippetDetail() {
     );
   }
 
+  // Create a custom button for the NavBar
+  const dashboardButton = (
+    <Link
+      to="/dashboard"
+      className="flex items-center gap-2 p-2 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-200 border border-gray-700/30 shadow-sm hover:shadow transition-all"
+    >
+      <ArrowLeft className="w-4 h-4" />
+      <span className="hidden sm:inline">Dashboard</span>
+    </Link>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col">
-      {/* Header */}
-      <header className="backdrop-blur-sm bg-gray-900/80 border-b border-purple-900/40 shadow-sm px-6 py-4 sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-3">
-              <Code2 className="w-7 h-7 text-purple-400" />
-              <h1 className="text-xl sm:text-2xl font-semibold tracking-tight bg-gradient-to-r from-purple-400 to-violet-500 bg-clip-text text-transparent">NeoCompiler</h1>
-            </Link>
-          </div>
-          <nav className="flex items-center gap-3">
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-2 px-3 py-1.5 border border-purple-600/70 rounded-lg hover:bg-purple-600/20 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </Link>
-            <Link
-              to="/compiler"
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-all"
-            >
-              New Snippet
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* Replace custom header with the reusable NavBar component */}
+      <NavBar additionalButtons={dashboardButton} />
 
-      <main className="flex-1 max-w-5xl mx-auto w-full p-6">
+      <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6">
         {/* Snippet Header */}
         <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{snippet.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">{snippet.title}</h1>
             {snippet.description && (
               <p className="text-gray-300">{snippet.description}</p>
             )}
@@ -222,11 +211,10 @@ export default function SnippetDetail() {
             <button
               onClick={handleToggleVisibility}
               disabled={isUpdatingVisibility}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${
-                isPublic
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${isPublic
                   ? 'bg-green-600/30 text-green-300 border border-green-600/50 hover:bg-green-600/40'
                   : 'bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700'
-              } transition-colors`}
+                } transition-colors`}
               title={isPublic ? "Make snippet private" : "Make snippet public"}
             >
               {isPublic ? (
@@ -286,8 +274,8 @@ export default function SnippetDetail() {
           </div>
         </div>
 
-        {/* Snippet Info */}
-        <div className="bg-gray-800/80 border border-gray-700 rounded-lg p-4 mb-6 flex flex-wrap gap-4 text-sm">
+        {/* Snippet Info - Updated to match SharedSnippet's layout style */}
+        <div className="mb-4 bg-gray-800/80 border border-gray-700 rounded-lg p-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
           <div>
             <span className="text-gray-400">Language:</span>{' '}
             <span className="font-medium">{snippet.language}</span>
@@ -316,9 +304,9 @@ export default function SnippetDetail() {
             <h2 className="text-lg font-medium mb-2">Tags</h2>
             <div className="flex flex-wrap gap-2">
               {snippet.tags.map(tag => (
-                <span 
+                <span
                   key={tag}
-                  className="px-3 py-1 bg-purple-900/30 border border-purple-800/50 rounded-full text-sm"
+                  className="px-2 py-0.5 bg-purple-900/30 border border-purple-800/50 rounded-full text-xs"
                 >
                   {tag}
                 </span>
@@ -329,40 +317,12 @@ export default function SnippetDetail() {
 
         {/* Code Display */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-medium">Code</h2>
-            <button
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(snippet.code);
-                  alert('Code copied to clipboard!');
-                } catch (err) {
-                  console.error("Failed to copy code:", err);
-                }
-              }}
-              className="flex items-center gap-1 text-xs text-gray-300 hover:text-white"
-            >
-              <Copy className="w-3.5 h-3.5" />
-              Copy code
-            </button>
-          </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
-            <div className="bg-gray-800/90 px-4 py-2 border-b border-gray-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-400">
-                {snippet.language}
-              </div>
-            </div>
-            <pre className="p-4 overflow-x-auto font-mono text-sm whitespace-pre-wrap">
-              <code>{snippet.code}</code>
-            </pre>
-          </div>
+          <CodeSnippetViewer
+            code={snippet.code}
+            language={snippet.language}
+            title={snippet.title}
+            showCopyButton={true}
+          />
         </div>
 
         {/* Shareable Link Section (if public) */}
@@ -379,11 +339,10 @@ export default function SnippetDetail() {
               />
               <button
                 onClick={handleCopyShareLink}
-                className={`px-3 py-2 rounded-lg ${
-                  copySuccess 
-                    ? 'bg-green-600/30 border border-green-500' 
+                className={`px-3 py-2 rounded-lg ${copySuccess
+                    ? 'bg-green-600/30 border border-green-500'
                     : 'bg-purple-600/30 border border-purple-500 hover:bg-purple-600/40'
-                }`}
+                  }`}
               >
                 {copySuccess ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
               </button>

@@ -212,7 +212,7 @@ export default function Community() {
                                             {snippet.creatorName ? snippet.creatorName.charAt(0).toUpperCase() : 'U'}
                                         </div>
                                     )}
-                                    <span className="hidden sm:inline">{snippet.creatorName || 'Anonymous'}</span>
+                                    <span className="hidden sm:inline">{snippet.creatorName || 'User'}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">

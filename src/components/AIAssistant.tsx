@@ -3,6 +3,7 @@ import { Bot, X, ChevronsUp, Sparkles, Code, CheckCircle2, Copy, Loader2, Settin
 import { getAICodeAssistance, explainCode, getCodeCompletions } from '../services/aiAssistance';
 import { AIAssistantProps, AIAssistanceMode } from '../types';
 import AISettings from './AISettings';
+import CodeSnippetViewer from './ui/CodeSnippetViewer';
 import Prism from 'prismjs';
 
 // Import necessary languages before the theme
@@ -305,51 +306,99 @@ export default function AIAssistant({
       .catch(err => console.error('Failed to copy: ', err));
   };
 
-  const createMarkup = (content: string) => {
-    if (!content) return { __html: '' };
+  const processCodeBlocks = (content: string) => {
+    if (!content) return { text: '', codeBlocks: [] };
+    
+    const codeBlockRegex = /```([\w]*)\n([\s\S]*?)```/g;
+    const codeBlocks: Array<{ language: string, code: string }> = [];
+    
+    // Replace code blocks with placeholders and collect the code
+    const processedText = content.replace(codeBlockRegex, (_, lang, code) => {
+      const language = lang.trim() || 'plaintext';
+      const normalizedLanguage = normalizeLanguage(language);
+      codeBlocks.push({ language: normalizedLanguage, code: code.trim() });
+      return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
+    });
+    
+    return { text: processedText, codeBlocks };
+  };
+  
+  // Normalize language identifier for Prism
+  const normalizeLanguage = (lang: string): string => {
+    const langLower = lang.toLowerCase();
+    
+    // Map some common language aliases
+    const langMap: Record<string, string> = {
+      'js': 'javascript',
+      'ts': 'typescript',
+      'py': 'python',
+      'sh': 'bash',
+      'shell': 'bash',
+      'jsx': 'javascript',
+      'tsx': 'typescript',
+      'yml': 'yaml',
+      'cpp': 'cpp',
+      'c++': 'cpp',
+    };
+    
+    return langMap[langLower] || langLower;
+  };
 
-    let htmlContent = content
-      // Format code blocks with proper Prism.js classes and preserve whitespace/formatting
-      .replace(/```([\w]*)\n([\s\S]*?)```/g, (_, lang, codeContent) => {
-        // Handle language mapping for Prism
-        let language = lang.trim() || 'plaintext';
-        
-        // Map some common language aliases
-        if (language === 'js') language = 'javascript';
-        if (language === 'ts') language = 'typescript';
-        if (language === 'py') language = 'python';
-        if (language === 'sh' || language === 'shell' || language === 'bash') language = 'bash';
-        if (language === 'jsx') language = 'javascript';
-        if (language === 'tsx') language = 'typescript';
-        if (language === 'yml') language = 'yaml';
-        
-        // Escape HTML entities and preserve whitespace
-        const lines = codeContent.split('\n');
-        const escapedCode = lines
-          .map((line: string) => 
-            line
-              .replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#039;')
-          )
-          .join('\\n')
-          .trim();
-        
-        // Add data-language attribute for the language label
-        // Use white-space: pre to preserve formatting
-        return `<pre class="code-block" data-language="${language}"><code class="language-${language}">${escapedCode}</code></pre>`;
-      })
-      // Format inline code
-      .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
-      // Convert newlines to <br> (only for text outside of code blocks)
-      .replace(/\n/g, '<br />');
+  // AICodeBlockRenderer component to render code blocks from parsed HTML
+  const AICodeBlockRenderer = ({ content }: { content: string }) => {
+    const [parsedContent, setParsedContent] = useState<React.ReactNode[]>([]);
 
-    // Replace the escaped newline sequences in code blocks with real newlines
-    htmlContent = htmlContent.replace(/\\n/g, '\n');
+    useEffect(() => {
+      // Parse the content and identify code blocks
+      const { text, codeBlocks } = processCodeBlocks(content);
+      
+      // Split text by code block placeholders
+      const parts = text.split(/(\_\_CODE\_BLOCK\_\d+\_\_)/g);
+      const renderedParts: React.ReactNode[] = [];
 
-    return { __html: htmlContent };
+      parts.forEach((part, index) => {
+        if (part.match(/\_\_CODE\_BLOCK\_(\d+)\_\_/)) {
+          // This is a code block placeholder
+          const blockIndex = parseInt(part.match(/\_\_CODE\_BLOCK\_(\d+)\_\_/)![1], 10);
+          if (blockIndex >= 0 && blockIndex < codeBlocks.length) {
+            const { language, code } = codeBlocks[blockIndex];
+            // Render the CodeSnippetViewer component
+            renderedParts.push(
+              <div key={`code-block-${index}`} className="my-3">
+                <CodeSnippetViewer 
+                  code={code} 
+                  language={language} 
+                  showHeader={true}
+                  maxHeight="400px"
+                />
+              </div>
+            );
+          }
+        } else if (part.trim()) {
+          // This is regular text - format it with HTML
+          renderedParts.push(
+            <div 
+              key={`text-${index}`} 
+              className="mb-3 last:mb-0"
+              dangerouslySetInnerHTML={{ 
+                __html: part
+                  .replace(/^(#+)\s+(.+)$/gm, (_, hashes, title) => `<h${hashes.length} class="text-lg font-semibold mt-2 mb-1">${title}</h${hashes.length}>`)
+                  .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
+                  .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                  .replace(/(?<!^)\*([^*\n]+)\*/gm, '<em>$1</em>')
+                  .replace(/^(\s*)\* /gm, '$1• ')
+                  .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
+                  .replace(/\n/g, '<br />') 
+              }}
+            />
+          );
+        }
+      });
+
+      setParsedContent(renderedParts);
+    }, [content]);
+
+    return <>{parsedContent}</>;
   };
 
   const handleOpenSettings = () => {
@@ -456,8 +505,7 @@ export default function AIAssistant({
                     {message.role === 'assistant' ? (
                       <>
                         <div className="prose prose-invert max-w-none">
-                          <div className="ai-response formatted-content"
-                            dangerouslySetInnerHTML={createMarkup(message.formattedContent || message.content)} />
+                          <AICodeBlockRenderer content={message.formattedContent || message.content} />
                         </div>
                         <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-gray-700/30">
                           <button

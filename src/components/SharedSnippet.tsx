@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Play, ArrowLeft, Copy, Check, ThumbsUp, ExternalLink } from 'lucide-react';
+import { Play, ArrowLeft, Copy, Check, ThumbsUp } from 'lucide-react';
 import { getCodeSnippetByShareableLink, incrementSnippetViews, incrementSnippetLikes } from '../services/codeSnippets';
 import { CodeSnippet } from '../types';
 import NavBar from './NavBar';
+import CodeSnippetViewer from './ui/CodeSnippetViewer';
 
 export default function SharedSnippet() {
   const { linkId } = useParams<{ linkId: string }>();
@@ -36,24 +37,24 @@ export default function SharedSnippet() {
 
       try {
         const snippetData = await getCodeSnippetByShareableLink(linkId);
-        
+
         if (!snippetData) {
           setError("The shared snippet could not be found or has been removed.");
           return;
         }
-        
+
         // Make sure snippet is public
         if (!snippetData.isPublic) {
           setError("This snippet is no longer available.");
           return;
         }
-        
+
         setSnippet(snippetData);
-        
+
         // Set liked state from localStorage
         const likedSnippets = JSON.parse(localStorage.getItem('likedSnippets') || '[]');
         setHasLiked(likedSnippets.includes(snippetData.id));
-        
+
         // Increment view count
         await incrementSnippetViews(snippetData.id);
       } catch (err: any) {
@@ -82,7 +83,7 @@ export default function SharedSnippet() {
   // Copy code to clipboard
   const handleCopyCode = async () => {
     if (!snippet?.code) return;
-    
+
     try {
       await navigator.clipboard.writeText(snippet.code);
       setIsCopied(true);
@@ -95,15 +96,15 @@ export default function SharedSnippet() {
   // Like snippet
   const handleLike = async () => {
     if (!snippet || hasLiked) return;
-    
+
     try {
       await incrementSnippetLikes(snippet.id);
-      
+
       // Store liked state in localStorage
       const likedSnippets = JSON.parse(localStorage.getItem('likedSnippets') || '[]');
       likedSnippets.push(snippet.id);
       localStorage.setItem('likedSnippets', JSON.stringify(likedSnippets));
-      
+
       // Update UI
       setHasLiked(true);
       setSnippet({
@@ -139,7 +140,7 @@ export default function SharedSnippet() {
         <div className="bg-red-900/20 border border-red-800 rounded-lg p-6 max-w-md w-full">
           <h2 className="text-xl font-semibold text-white mb-2">Error</h2>
           <p className="text-red-400 mb-4">{error}</p>
-          <Link 
+          <Link
             to="/"
             className="text-purple-400 hover:text-purple-300 inline-flex items-center gap-1"
           >
@@ -157,7 +158,7 @@ export default function SharedSnippet() {
         <div className="bg-gray-800/80 border border-gray-700 rounded-lg p-6 max-w-md w-full">
           <h2 className="text-xl font-semibold text-white mb-2">Snippet Not Found</h2>
           <p className="text-gray-400 mb-4">This shared snippet might have been removed or is no longer available.</p>
-          <Link 
+          <Link
             to="/"
             className="text-purple-400 hover:text-purple-300 inline-flex items-center gap-1"
           >
@@ -181,13 +182,13 @@ export default function SharedSnippet() {
             {snippet.description && (
               <p className="text-gray-300 text-sm md:text-base">{snippet.description}</p>
             )}
-            
+
             {/* Creator information with image error handling */}
             <div className="flex items-center mt-3 text-sm text-gray-400">
               <div className="flex items-center">
                 {snippet.creatorPhotoURL && !imageError ? (
-                  <img 
-                    src={snippet.creatorPhotoURL} 
+                  <img
+                    src={snippet.creatorPhotoURL}
                     alt={snippet.creatorName || 'User'}
                     className="w-6 h-6 rounded-full mr-2 border border-purple-500/50"
                     onError={handleImageError}
@@ -197,7 +198,7 @@ export default function SharedSnippet() {
                     {snippet.creatorName ? snippet.creatorName.charAt(0).toUpperCase() : 'U'}
                   </div>
                 )}
-                <span>Created by {snippet.creatorName || 'Anonymous'}</span>
+                <span>Created by {snippet.creatorName || 'User'}</span>
               </div>
             </div>
           </div>
@@ -234,11 +235,10 @@ export default function SharedSnippet() {
             <button
               onClick={handleLike}
               disabled={hasLiked}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${
-                hasLiked
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${hasLiked
                   ? 'bg-red-600/20 border-red-500/50 text-red-400'
                   : 'bg-gray-800 border-gray-700 hover:border-red-500/50 hover:text-red-400'
-              } transition-all`}
+                } transition-all`}
             >
               <ThumbsUp className={`w-5 h-5 ${hasLiked ? 'fill-red-500 text-red-500' : ''}`} />
               <span>{snippet.likes || 0}</span>
@@ -246,53 +246,40 @@ export default function SharedSnippet() {
           </div>
         </div>
 
-        {/* Language and metadata */}
+        {/* Snippet Info - Updated to match SharedSnippet's layout style */}
         <div className="mb-4 bg-gray-800/80 border border-gray-700 rounded-lg p-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
           <div>
             <span className="text-gray-400">Language:</span>{' '}
             <span className="font-medium">{snippet.language}</span>
           </div>
-          {snippet.tags && snippet.tags.length > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-400">Tags:</span>
-              <div className="flex flex-wrap gap-2">
-                {snippet.tags.map(tag => (
-                  <span 
-                    key={tag}
-                    className="px-2 py-0.5 bg-purple-900/30 border border-purple-800/50 rounded-full text-xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-          <div className="ml-auto text-gray-400">
-            {new Date(snippet.createdAt).toLocaleDateString()}
+          <div>
+            <span className="text-gray-400">Created:</span>{' '}
+            <span>{new Date(snippet.createdAt).toLocaleDateString()}</span>
+          </div>
+          <div>
+            <span className="text-gray-400">Updated:</span>{' '}
+            <span>{new Date(snippet.updatedAt).toLocaleDateString()}</span>
+          </div>
+          <div>
+            <span className="text-gray-400">Views:</span>{' '}
+            <span>{snippet.views || 0}</span>
+          </div>
+          <div>
+            <span className="text-gray-400">Likes:</span>{' '}
+            <span>{snippet.likes || 0}</span>
           </div>
         </div>
 
         {/* Code Display */}
         <div className="mb-8">
-          <div className="overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
-            <div className="bg-gray-800/90 flex justify-between items-center px-4 py-2 border-b border-gray-800">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              </div>
-              <div className="text-sm text-gray-400">
-                {snippet.language}
-              </div>
-            </div>
-            <pre className="p-4 overflow-x-auto max-h-[400px] font-mono text-sm whitespace-pre-wrap">
-              <code className="language-{snippet.language}">
-                {snippet.code}
-              </code>
-            </pre>
-          </div>
+          <CodeSnippetViewer
+            code={snippet.code}
+            language={snippet.language}
+            title={snippet.title}
+            showCopyButton={true}
+          />
         </div>
-        
+
         {/* Call to action */}
         <div className="mt-8 text-center">
           <p className="text-gray-400 mb-4">
