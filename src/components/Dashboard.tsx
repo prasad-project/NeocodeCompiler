@@ -151,7 +151,7 @@ export default function Dashboard() {
 
             <main className="flex-1 max-w-7xl mx-auto w-full p-6">
                 <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold">My Code Snippets</h2>
+                    <h2 className="text-2xl sm:text-4xl font-bold">My Code <span className="text-purple-500">Snippets</span></h2>
                     <Link
                         to="/compiler"
                         className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors"

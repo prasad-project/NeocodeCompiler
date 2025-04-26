@@ -110,10 +110,13 @@ export default function Community() {
 
             {/* Main Content */}
             <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2">Community Code Snippets</h1>
-                    <p className="text-gray-300">
-                        Explore code snippets shared by the NeoCompiler community
+                <div className="text-center mb-8">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                    Community Code <span className="text-purple-500">Snippets</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+                    Explore code snippets shared by the NeoCompiler community
                     </p>
                 </div>
 
