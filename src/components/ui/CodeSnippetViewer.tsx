@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Check, Copy, ExternalLink } from 'lucide-react';
 import Prism from 'prismjs';
 import { useNavigate } from 'react-router-dom';
@@ -38,9 +38,10 @@ export default function CodeSnippetViewer({
     showCopyButton = true,
     showLanguageTag = true,
     showOpenInCompiler = true,
-    maxHeight = '70vh'
 }: CodeSnippetViewerProps) {
     const [isCopied, setIsCopied] = useState(false);
+    const [highlightedCode, setHighlightedCode] = useState<string>('');
+    const codeElementRef = useRef<HTMLElement>(null);
     const navigate = useNavigate();
 
     // Normalize language identifier for Prism
@@ -64,13 +65,27 @@ export default function CodeSnippetViewer({
         return langMap[langLower] || langLower;
     };
 
-    // Apply syntax highlighting when the code changes
+    // Perform syntax highlighting once when the component mounts or code/language changes
     useEffect(() => {
-        const timer = setTimeout(() => {
-            Prism.highlightAll();
-        }, 100);
-
-        return () => clearTimeout(timer);
+        const normalizedLanguage = normalizeLanguage(language);
+        
+        // Handle the syntax highlighting in a way that prevents layout shifts
+        const performHighlighting = () => {
+            // Apply highlighting directly to the code without DOM manipulation
+            if (Prism.languages[normalizedLanguage]) {
+                const highlighted = Prism.highlight(
+                    code, 
+                    Prism.languages[normalizedLanguage], 
+                    normalizedLanguage
+                );
+                setHighlightedCode(highlighted);
+            } else {
+                // Fallback if language grammar is not found
+                setHighlightedCode(code);
+            }
+        };
+        
+        performHighlighting();
     }, [code, language]);
 
     // Handle copy code to clipboard
@@ -117,7 +132,7 @@ export default function CodeSnippetViewer({
                     <div className="flex items-center space-x-2">
                         {showLanguageTag && (
                             <div className="flex items-center text-xs text-gray-400 bg-gray-700/50 px-2 py-0.5 rounded-md">
-<span className="w-2 h-2 bg-green-500 rounded-full mr-1.5 animate-pulse"></span>
+                                <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5 animate-pulse"></span>
                                 <span className="lowercase">{language}</span>
                             </div>
                         )}
@@ -148,13 +163,14 @@ export default function CodeSnippetViewer({
             )}
 
             {/* Code content - using Tailwind classes instead of custom CSS */}
-            <div className="overflow-auto relative" style={{ maxHeight }}>
-                {/* Blue overlay for code block */}
-                <div className="absolute inset-0 bg-indigo-900/[0.03] pointer-events-none"></div>
-                <pre className="m-0 p-0 bg-gray-900">
-                    <code className={`language-${normalizedLanguage} block p-4 font-mono text-sm leading-relaxed whitespace-pre tab-2`}>
-                        {code}
-                    </code>
+            <div className="overflow-auto relative">                
+                {/* Pre-rendered code with highlighting already applied */}
+                <pre className="bg-gray-900 font-mono min-h-[50px]">
+                    <code 
+                        ref={codeElementRef}
+                        className={`language-${normalizedLanguage} block p-4 text-sm leading-relaxed whitespace-pre tab-2`}
+                        dangerouslySetInnerHTML={{ __html: highlightedCode }}
+                    />
                 </pre>
             </div>
         </div>

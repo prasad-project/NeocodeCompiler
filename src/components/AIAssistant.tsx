@@ -1,29 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Bot, X, ChevronsUp, Sparkles, Code, CheckCircle2, Copy, Loader2, Settings } from 'lucide-react';
 import { getAICodeAssistance, explainCode, getCodeCompletions } from '../services/aiAssistance';
 import { AIAssistantProps, AIAssistanceMode } from '../types';
 import AISettings from './AISettings';
 import CodeSnippetViewer from './ui/CodeSnippetViewer';
-import Prism from 'prismjs';
-
-// Import necessary languages before the theme
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-c';
-import 'prismjs/components/prism-cpp';
-import 'prismjs/components/prism-go';
-import 'prismjs/components/prism-rust';
-import 'prismjs/components/prism-ruby';
-import 'prismjs/components/prism-markup';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-yaml';
-
-// Import Prism CSS theme - now after languages
-import 'prismjs/themes/prism-tomorrow.css';
 
 // Define a message structure for our chat
 interface ChatMessage {
@@ -32,6 +12,8 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   timestamp: Date;
   formattedContent?: string;
+  highlightedContent?: string; 
+  extractedCodeBlocks?: Array<{code: string, language: string}>; // Array of code blocks for CodeSnippetViewer
 }
 
 export default function AIAssistant({
@@ -74,22 +56,6 @@ export default function AIAssistant({
       latestMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [chatHistory]);
-  
-  // Highlight code blocks with Prism.js when chat history changes
-  useEffect(() => {
-    // Use setTimeout to ensure DOM is updated before highlighting
-    if (chatHistory.length > 0) {
-      // First attempt immediately after render
-      Prism.highlightAll();
-      
-      // Second attempt after a delay to ensure DOM has fully updated
-      const timer = setTimeout(() => {
-        Prism.highlightAll();
-      }, 150);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [chatHistory]);
 
   // Helper function to handle setting multiple refs
   const setMultipleRefs = (isLast: boolean, isAssistant: boolean, element: HTMLDivElement | null) => {
@@ -102,6 +68,35 @@ export default function AIAssistant({
         latestMessageRef.current = element;
       }
     }
+  };
+
+  // Helper function to extract code blocks from content
+  const extractCodeBlocks = (content: string): Array<{code: string, language: string}> => {
+    const codeBlocks: Array<{code: string, language: string}> = [];
+    const regex = /```([\w]*)\n([\s\S]*?)```/g;
+    let match;
+    
+    while ((match = regex.exec(content)) !== null) {
+      const language = match[1].trim() || 'plaintext';
+      const code = match[2].trim();
+      
+      // Map language aliases
+      let normalizedLang = language;
+      if (language === 'js') normalizedLang = 'javascript';
+      if (language === 'ts') normalizedLang = 'typescript';
+      if (language === 'py') normalizedLang = 'python';
+      if (language === 'sh' || language === 'shell') normalizedLang = 'bash';
+      if (language === 'jsx') normalizedLang = 'javascript';
+      if (language === 'tsx') normalizedLang = 'typescript';
+      if (language === 'yml') normalizedLang = 'yaml';
+      
+      codeBlocks.push({
+        code,
+        language: normalizedLang
+      });
+    }
+    
+    return codeBlocks;
   };
 
   const formatResponse = (text: string): string => {
@@ -178,10 +173,16 @@ export default function AIAssistant({
         setError(result.error || 'Failed to get assistance');
       } else {
         // Add AI response to chat history
+        const formattedContent = formatResponse(result.suggestion || '');
+        const highlightedContent = createMarkupAsString(formattedContent);
+        const extractedBlocks = extractCodeBlocks(result.suggestion || '');
+        
         const aiMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           content: result.suggestion || '',
-          formattedContent: formatResponse(result.suggestion || ''),
+          formattedContent: formattedContent,
+          highlightedContent: highlightedContent,
+          extractedCodeBlocks: extractedBlocks,
           role: 'assistant',
           timestamp: new Date()
         };
@@ -215,10 +216,16 @@ export default function AIAssistant({
         setError(result.error || 'Failed to explain code');
       } else {
         // Add AI response to chat history
+        const formattedContent = formatResponse(result.suggestion || '');
+        const highlightedContent = createMarkupAsString(formattedContent);
+        const extractedBlocks = extractCodeBlocks(result.suggestion || '');
+        
         const aiMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           content: result.suggestion || '',
-          formattedContent: formatResponse(result.suggestion || ''),
+          formattedContent: formattedContent,
+          highlightedContent: highlightedContent,
+          extractedCodeBlocks: extractedBlocks,
           role: 'assistant',
           timestamp: new Date()
         };
@@ -252,10 +259,16 @@ export default function AIAssistant({
         setError(result.error || 'Failed to complete code');
       } else {
         // Add AI response to chat history
+        const formattedContent = formatResponse(result.suggestion || '');
+        const highlightedContent = createMarkupAsString(formattedContent);
+        const extractedBlocks = extractCodeBlocks(result.suggestion || '');
+        
         const aiMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           content: result.suggestion || '',
-          formattedContent: formatResponse(result.suggestion || ''),
+          formattedContent: formattedContent,
+          highlightedContent: highlightedContent,
+          extractedCodeBlocks: extractedBlocks,
           role: 'assistant',
           timestamp: new Date()
         };
@@ -306,99 +319,45 @@ export default function AIAssistant({
       .catch(err => console.error('Failed to copy: ', err));
   };
 
-  const processCodeBlocks = (content: string) => {
-    if (!content) return { text: '', codeBlocks: [] };
-    
-    const codeBlockRegex = /```([\w]*)\n([\s\S]*?)```/g;
-    const codeBlocks: Array<{ language: string, code: string }> = [];
-    
-    // Replace code blocks with placeholders and collect the code
-    const processedText = content.replace(codeBlockRegex, (_, lang, code) => {
-      const language = lang.trim() || 'plaintext';
-      const normalizedLanguage = normalizeLanguage(language);
-      codeBlocks.push({ language: normalizedLanguage, code: code.trim() });
-      return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
+  // Function to create a clean format without code blocks (for text content)
+  const createTextContent = (content: string): string => {
+    if (!content) return '';
+
+    // Instead of removing code blocks, replace them with placeholders we can target
+    let textContent = content.replace(/```([\w]*)\n([\s\S]*?)```/g, (_match, _lang, _code, offset) => {
+      // Create a unique ID for this code block based on position
+      return `<div class="code-block-placeholder" data-position="${offset}"></div>`;
     });
     
-    return { text: processedText, codeBlocks };
-  };
-  
-  // Normalize language identifier for Prism
-  const normalizeLanguage = (lang: string): string => {
-    const langLower = lang.toLowerCase();
+    // Format remaining markdown
+    textContent = textContent
+      .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/(?<!^)\*([^*\n]+)\*/gm, '<em>$1</em>')
+      .replace(/^(\s*)\* /gm, '$1• ')
+      .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
+      .replace(/\n/g, '<br />');
     
-    // Map some common language aliases
-    const langMap: Record<string, string> = {
-      'js': 'javascript',
-      'ts': 'typescript',
-      'py': 'python',
-      'sh': 'bash',
-      'shell': 'bash',
-      'jsx': 'javascript',
-      'tsx': 'typescript',
-      'yml': 'yaml',
-      'cpp': 'cpp',
-      'c++': 'cpp',
-    };
-    
-    return langMap[langLower] || langLower;
+    return textContent;
   };
 
-  // AICodeBlockRenderer component to render code blocks from parsed HTML
-  const AICodeBlockRenderer = ({ content }: { content: string }) => {
-    const [parsedContent, setParsedContent] = useState<React.ReactNode[]>([]);
+  // Function to create markup as a string (without direct Prism usage)
+  const createMarkupAsString = (content: string): string => {
+    if (!content) return '';
 
-    useEffect(() => {
-      // Parse the content and identify code blocks
-      const { text, codeBlocks } = processCodeBlocks(content);
-      
-      // Split text by code block placeholders
-      const parts = text.split(/(\_\_CODE\_BLOCK\_\d+\_\_)/g);
-      const renderedParts: React.ReactNode[] = [];
+    let htmlContent = content
+      // Format code blocks - we don't do syntax highlighting here anymore since we use CodeSnippetViewer
+      .replace(/```([\w]*)\n([\s\S]*?)```/g, (_, lang) => {
+        // We're not going to highlight this directly - we extract these with extractCodeBlocks
+        // Just return a placeholder that will get replaced later
+        return `<div class="code-placeholder" data-language="${lang || 'plaintext'}"></div>`;
+      })
+      // Format inline code
+      .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
+      // Convert newlines to <br> (only for text outside of code blocks)
+      .replace(/\n/g, '<br />');
 
-      parts.forEach((part, index) => {
-        if (part.match(/\_\_CODE\_BLOCK\_(\d+)\_\_/)) {
-          // This is a code block placeholder
-          const blockIndex = parseInt(part.match(/\_\_CODE\_BLOCK\_(\d+)\_\_/)![1], 10);
-          if (blockIndex >= 0 && blockIndex < codeBlocks.length) {
-            const { language, code } = codeBlocks[blockIndex];
-            // Render the CodeSnippetViewer component
-            renderedParts.push(
-              <div key={`code-block-${index}`} className="my-3">
-                <CodeSnippetViewer 
-                  code={code} 
-                  language={language} 
-                  showHeader={true}
-                  maxHeight="400px"
-                />
-              </div>
-            );
-          }
-        } else if (part.trim()) {
-          // This is regular text - format it with HTML
-          renderedParts.push(
-            <div 
-              key={`text-${index}`} 
-              className="mb-3 last:mb-0"
-              dangerouslySetInnerHTML={{ 
-                __html: part
-                  .replace(/^(#+)\s+(.+)$/gm, (_, hashes, title) => `<h${hashes.length} class="text-lg font-semibold mt-2 mb-1">${title}</h${hashes.length}>`)
-                  .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
-                  .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                  .replace(/(?<!^)\*([^*\n]+)\*/gm, '<em>$1</em>')
-                  .replace(/^(\s*)\* /gm, '$1• ')
-                  .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
-                  .replace(/\n/g, '<br />') 
-              }}
-            />
-          );
-        }
-      });
-
-      setParsedContent(renderedParts);
-    }, [content]);
-
-    return <>{parsedContent}</>;
+    return htmlContent;
   };
 
   const handleOpenSettings = () => {
@@ -415,6 +374,76 @@ export default function AIAssistant({
   };
 
   if (!isOpen) return null;
+
+  // Custom component to render a mix of text and code snippets in proper order
+  const RichMessageContent = ({ message }: { message: ChatMessage }) => {
+    // Ensure extractedCodeBlocks exists and has content
+    const hasCodeBlocks = message.extractedCodeBlocks && message.extractedCodeBlocks.length > 0;
+    
+    if (!message.formattedContent || !hasCodeBlocks) {
+      // If no code blocks, just return the formatted content
+      return (
+        <div 
+          className="ai-response formatted-content"
+          dangerouslySetInnerHTML={{ __html: createTextContent(message.formattedContent || message.content) }} 
+        />
+      );
+    }
+
+    // Get the text with placeholders
+    const textWithPlaceholders = createTextContent(message.formattedContent);
+    
+    // Split the text by placeholders
+    const parts = textWithPlaceholders.split('<div class="code-block-placeholder" data-position="');
+    
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (index === 0) {
+            // First part is always text
+            return (
+              <div 
+                key={`text-${index}`}
+                className="ai-response formatted-content" 
+                dangerouslySetInnerHTML={{ __html: part }} 
+              />
+            );
+          }
+          
+          // For other parts, we have a code block followed by text
+          const [, textContent] = part.split('"></div>');
+          // We capture position but don't need to use it directly
+          // const position = parseInt(positionEnd, 10);
+          
+          // Find the matching code block by index
+          const codeBlockIndex = Math.min(index - 1, message.extractedCodeBlocks!.length - 1);
+          const codeBlock = message.extractedCodeBlocks![codeBlockIndex];
+          
+          return (
+            <React.Fragment key={`part-${index}`}>
+              {/* Render the code block using CodeSnippetViewer */}
+              <div className="">
+                <CodeSnippetViewer
+                  code={codeBlock.code}
+                  language={codeBlock.language}
+                  maxHeight="300px"
+                  showHeader={true}
+                />
+              </div>
+              
+              {/* Render the text content that follows */}
+              {textContent && (
+                <div 
+                  className="ai-response formatted-content"
+                  dangerouslySetInnerHTML={{ __html: textContent }} 
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </>
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
@@ -505,9 +534,9 @@ export default function AIAssistant({
                     {message.role === 'assistant' ? (
                       <>
                         <div className="prose prose-invert max-w-none">
-                          <AICodeBlockRenderer content={message.formattedContent || message.content} />
+                          <RichMessageContent message={message} />
                         </div>
-                        <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-gray-700/30">
+                        <div className="flex justify-end gap-2 mt-3 pt-2 border-t border-gray-700/30">
                           <button
                             onClick={() => handleCopyResponse(message.content)}
                             className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded transition-colors text-white"

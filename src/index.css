@@ -119,13 +119,9 @@ body {
 }
 
 /* PrismJS theme overrides to match our color scheme - Applied universally */
-/* Override Prism's default background color */
 pre[class*="language-"],
-code[class*="language-"],
-.prism-code {
-  background: #171b32 !important;
-  margin: 0;
-  padding: 0.5rem;
+code[class*="language-"]{
+  font-size: 0.875rem !important;
 }
 
 .token.comment,
