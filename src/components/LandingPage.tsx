@@ -119,10 +119,9 @@ export default function LandingPage() {
 function Hero() {
     return (
         <section className="relative py-16 sm:py-20 px-4 overflow-hidden">
-            <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
-
-                {/* Left Content */}
-                <div className="flex-1 flex flex-col items-center text-center">
+            <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-4">
+                {/* Left Content - 3/5 of the space using grid */}
+                <div className="lg:col-span-3 flex flex-col items-center text-center">
                     {/* Badge */}
                     <div className="flex items-center px-3 py-1 mb-6 bg-purple-900/30 border border-purple-500/30 rounded-full text-sm text-purple-300 backdrop-blur-sm">
                         <Sparkles className="w-4 h-4 mr-2 text-purple-400" />
@@ -130,10 +129,18 @@ function Hero() {
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
-                        <span>Modern</span>{" "}
-                        <span className="bg-gradient-to-r from-purple-400 via-violet-500 to-indigo-400 bg-clip-text text-transparent">Code Compilation</span>{" "}
-                        <span>in the Cloud</span>
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight font-mono">
+                        <span className="text-gray-300">const code = </span>
+                        <span className="bg-gradient-to-r from-purple-400 via-violet-500 to-indigo-400 bg-clip-text text-transparent">writeAwesomeCode()</span>
+                        <span className="text-gray-300">;</span>
+                        <br />
+                        <span className="text-gray-300">const result = </span>
+                        <span className="bg-gradient-to-r from-purple-400 via-violet-500 to-indigo-400 bg-clip-text text-transparent">runCode(code)</span>
+                        <span className="text-gray-300">;</span>
+                        <br />
+                        <span className="text-gray-300">return </span>
+                        <span className="bg-gradient-to-r from-purple-400 via-violet-500 to-indigo-400 bg-clip-text text-transparent">share(result)</span>
+                        <span className="text-gray-300">;</span>
                     </h1>
 
                     {/* Subtext */}
@@ -162,9 +169,9 @@ function Hero() {
                     </div>
                 </div>
 
-                {/* Right Content */}
-                <div className="flex-1 flex flex-col items-center w-full">
-                    <div className="relative w-full max-w-md float-animation">
+                {/* Right Content - 2/5 of the space */}
+                <div className="lg:col-span-2 flex flex-col items-center md:mr-auto">
+                    <div className="relative w-full max-w-md float-animation mt-8">
                         {/* Glow */}
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-violet-600 rounded-2xl blur-xl opacity-10"></div>
 
@@ -193,14 +200,12 @@ function Hero() {
                                 <span className="text-xs sm:text-sm text-gray-300">{item.label}</span>
                             </div>
                         ))}
-
                     </div>
                 </div>
             </div>
         </section>
     );
 }
-
 function CodeSnippet() {
     return (
         <div className="w-full md:flex-1 max-w-2xl">
