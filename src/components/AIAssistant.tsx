@@ -97,8 +97,7 @@ const CodeBlockPart = memo(({
       <CodeSnippetViewer
         code={codeBlock.code}
         language={codeBlock.language}
-        maxHeight="300px"
-        showHeader={true}
+        showOpenInCompiler={false}
       />
     </div>
   );
@@ -159,12 +158,15 @@ const RichMessageContent = memo(({ message }: { message: ChatMessage }) => {
 // Optimize complete messages to prevent rerenders
 const Message = memo(({
   message,
-  isLast,
-  setRef
+  setRef,
+  onInsertCode,
+  onClose
 }: {
   message: ChatMessage;
-  isLast: boolean;
+  isLast?: boolean; // Made optional and unused param explicit
   setRef: (el: HTMLDivElement | null) => void;
+  onInsertCode: (code: string) => void;
+  onClose: () => void;
 }) => {
   return (
     <div
@@ -191,7 +193,12 @@ const Message = memo(({
               </button>
               <button
                 className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded transition-colors text-white"
-                onClick={() => message.extractedCodeBlocks?.[0]?.code && navigator.clipboard.writeText(message.extractedCodeBlocks[0].code)}
+                onClick={() => {
+                  if (message.extractedCodeBlocks?.[0]?.code) {
+                    onInsertCode(message.extractedCodeBlocks[0].code);
+                    onClose();
+                  }
+                }}
               >
                 <CheckCircle2 className="w-3 h-3" /> Insert
               </button>
@@ -439,41 +446,6 @@ export default function AIAssistant({
     }
   };
 
-  const extractCodeFromResponse = (text: string) => {
-    const codeBlockRegex = /```(?:\w+)?\s*([\s\S]*?)```/g;
-    const matches = [...text.matchAll(codeBlockRegex)];
-
-    if (matches.length > 0) {
-      return matches[0][1].trim();
-    }
-
-    return text;
-  };
-
-  const handleInsertSuggestion = (messageContent: string) => {
-    if (!messageContent) return;
-
-    const codeToInsert = extractCodeFromResponse(messageContent);
-    onInsertCode(codeToInsert);
-    onClose();
-  };
-
-  const handleCopyResponse = (messageContent: string) => {
-    if (!messageContent) return;
-
-    navigator.clipboard.writeText(messageContent)
-      .then(() => {
-        const tempMessage = document.createElement('div');
-        tempMessage.className = 'fixed bottom-4 right-4 bg-purple-700 text-white px-4 py-2 rounded shadow-lg';
-        tempMessage.textContent = 'Copied to clipboard!';
-        document.body.appendChild(tempMessage);
-
-        setTimeout(() => {
-          document.body.removeChild(tempMessage);
-        }, 2000);
-      })
-      .catch(err => console.error('Failed to copy: ', err));
-  };
 
   const handleOpenSettings = () => {
     setIsSettingsOpen(true);
@@ -573,6 +545,8 @@ export default function AIAssistant({
                     message.role === 'assistant',
                     element
                   )}
+                  onInsertCode={onInsertCode}
+                  onClose={onClose}
                 />
               ))}
               {/* Invisible element to ensure we can always scroll to the bottom */}
