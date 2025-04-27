@@ -107,8 +107,8 @@ export default function LandingPage() {
             <LanguageShowcase />
             <HowItWorks />
             <Features />
-            <Testimonials />
             <AIFeatures />
+            <Testimonials />
             <UserFeatures />
             <FAQ />
             <Footer />
