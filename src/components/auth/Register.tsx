@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { UserPlus, Mail, Lock, AlertCircle, User } from 'lucide-react';
-import { registerWithEmail, updateUserProfile } from '../../services/firebase';
+import { registerWithEmail, updateUserProfile, createUserDocument } from '../../services/firebase';
 
 interface RegisterProps {
   onToggleForm: () => void;
@@ -33,6 +33,9 @@ export default function Register({ onToggleForm }: RegisterProps) {
       // Update profile with display name
       if (userCredential.user) {
         await updateUserProfile(userCredential.user, name);
+        
+        // Create user document in Firestore - this is the key addition
+        await createUserDocument(userCredential.user);
       }
 
       // Registration successful - redirect will happen automatically due to auth state change

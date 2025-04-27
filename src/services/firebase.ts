@@ -10,7 +10,7 @@ import {
   signInWithPopup,
   User as FirebaseUser
 } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // Your Firebase configuration
@@ -52,6 +52,39 @@ const updateUserProfile = (user: FirebaseUser, displayName: string, photoURL?: s
   return updateProfile(user, { displayName, photoURL: photoURL || null });
 };
 
+// Create user document in Firestore
+const createUserDocument = async (user: FirebaseUser) => {
+  try {
+    const userRef = doc(db, 'users', user.uid);
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || null,
+      photoURL: user.photoURL || null,
+      createdAt: new Date().toISOString(),
+    };
+    
+    await setDoc(userRef, userData);
+    console.log('User document created successfully in Firestore');
+    return userData;
+  } catch (error) {
+    console.error('Error creating user document:', error);
+    throw error;
+  }
+};
+
+// Update user document in Firestore
+const updateUserDocument = async (userId: string, data: Partial<{displayName: string | null, photoURL: string | null}>) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, data);
+    console.log('User document updated successfully');
+  } catch (error) {
+    console.error('Error updating user document:', error);
+    throw error;
+  }
+};
+
 export {
   auth,
   db,
@@ -61,5 +94,7 @@ export {
   loginWithGoogle,
   logoutUser,
   updateUserProfile,
+  createUserDocument,
+  updateUserDocument,
   onAuthStateChanged
 };

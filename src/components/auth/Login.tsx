@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, Mail, Lock, AlertCircle, Github } from 'lucide-react';
-import { loginWithEmail, loginWithGoogle } from '../../services/firebase';
+import { loginWithEmail, loginWithGoogle, createUserDocument } from '../../services/firebase';
 
 interface LoginProps {
   onToggleForm: () => void;
@@ -34,7 +34,14 @@ export default function Login({ onToggleForm }: LoginProps) {
     setIsLoading(true);
 
     try {
-      await loginWithGoogle();
+      const result = await loginWithGoogle();
+      
+      // Create user document in Firestore for Google sign-in users
+      if (result.user) {
+        // Check if this might be a first-time Google sign-in
+        await createUserDocument(result.user);
+      }
+      
       navigate('/compiler');
     } catch (err: any) {
       setError(err.message || 'Failed to login with Google. Please try again.');
