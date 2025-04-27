@@ -118,7 +118,7 @@ body {
   white-space: nowrap;
 }
 
-/* PrismJS theme overrides to match our color scheme - Applied universally */
+/* PrismJS theme overrides to match our Neo Dark theme - Applied universally */
 pre[class*="language-"],
 code[class*="language-"]{
   font-size: 0.875rem !important;
@@ -128,11 +128,11 @@ code[class*="language-"]{
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #6b7280;
+  color: #6272a4 !important; /* Match Neo Dark comment */
 }
 
 .token.punctuation {
-  color: #e2e8f0;
+  color: #e2e8f0 !important; /* Match Neo Dark delimiter */
 }
 
 .token.namespace {
@@ -144,12 +144,12 @@ code[class*="language-"]{
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #f472b6;
+  color: #2dd4bf !important; /* Match Neo Dark tag */
 }
 
 .token.boolean,
 .token.number {
-  color: #fcd34d;
+  color: #fcd34d !important; /* Match Neo Dark number */
 }
 
 .token.selector,
@@ -158,7 +158,7 @@ code[class*="language-"]{
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: #4ade80;
+  color: #4ade80 !important; /* Match Neo Dark string */
 }
 
 .token.operator,
@@ -166,21 +166,22 @@ code[class*="language-"]{
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: #f9a8d4;
+  color: #f472b6 !important; /* Match Neo Dark operator */
 }
 
 .token.atrule,
+.token.attr-value,
 .token.keyword {
-  color: #a78bfa;
+  color: #a78bfa !important; /* Match Neo Dark keyword */
 }
 
 .token.function,
 .token.class-name {
-  color: #60a5fa;
+  color: #60a5fa !important; /* Match Neo Dark function */
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-  color: #fb923c;
+  color: #fb923c !important; /* Match Neo Dark variable */
 }
