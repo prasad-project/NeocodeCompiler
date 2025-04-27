@@ -1,6 +1,6 @@
-# Neo Compiler
+# NeoCompiler
 
-Neo Compiler is a modern and feature-rich online code compiler that supports multiple programming languages. It allows users to write, execute, and share code snippets directly in the browser. The application is built using React and TypeScript, and it leverages the power of the Monaco Editor for a seamless coding experience. Neo Compiler also integrates AI assistance using the Gemini API to help users with code generation, completion, and explanations.
+NeoCompiler is a modern, feature-rich online code compiler and social coding platform that supports multiple programming languages. It allows users to write, execute, and share code snippets directly in the browser. Users can create personalized profiles, share their code snippets, and connect with other developers. The application is built using React and TypeScript, leveraging the power of the Piston API Monaco Editor for a seamless coding experience. NeoCompiler also integrates AI assistance using the Gemini API to help users with code generation, optimization, debugging, and explanations.
 
 ![Neo Compiler](public/neocompiler.webp)
 
@@ -8,10 +8,15 @@ Neo Compiler is a modern and feature-rich online code compiler that supports mul
 
 - **Multi-language Support**: Code in multiple programming languages including JavaScript, TypeScript, Python, Java, C++, C, Go, Rust, and Ruby.
 - **Real-time Code Execution**: Execute code directly in the browser with results displayed in real-time.
+- **Developer Community**: Connect with other coders, explore trending snippets, and discover popular code examples.
+- **User Profiles**: Create your personalized developer profile with username, bio, profile picture, and social links.
+- **Social Coding**: Share your code snippets publicly, get likes and views, and build your coding portfolio.
 - **AI Assistance**: Get AI-powered coding help using Gemini API to:
   - Generate code suggestions
   - Complete your code
   - Explain code functionality
+  - Optimize code performance
+  - Debug issues
 - **Code Sharing**: Save and share code snippets with unique shareable links.
 - **User Authentication**: Sign up, log in, and manage your saved code snippets.
 - **Custom Themes**: Choose from multiple editor themes including Dark and Light mode variants.
