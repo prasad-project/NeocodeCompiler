@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, User, Save, Settings, ChevronDown } from 'lucide-react';
+import { LogOut, User, Save, ChevronDown, Terminal } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { logoutUser } from '../services/firebase';
 
@@ -66,9 +66,9 @@ export default function ProfileMenu() {
       >
         <div className="flex items-center">
           {currentUser.photoURL && !imageError ? (
-            <img 
-              src={currentUser.photoURL} 
-              alt={currentUser.displayName || 'User'} 
+            <img
+              src={currentUser.photoURL}
+              alt={currentUser.displayName || 'User'}
               className="w-10 h-10 rounded-full border-2 border-purple-500"
               onError={handleImageError}
             />
@@ -95,25 +95,35 @@ export default function ProfileMenu() {
           </div>
 
           {/* Menu items */}
-          <Link 
-            to="/dashboard" 
+
+          <Link
+            to={`/${currentUser.username || currentUser.uid}`}
             className="flex px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 items-center gap-2"
             onClick={() => setIsOpen(false)}
           >
             <User className="w-4 h-4 text-purple-400" />
-            My Snippets
+            Public Profile
           </Link>
-          
-          <Link 
-            to="/compiler" 
+
+          <Link
+            to="/dashboard"
             className="flex px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 items-center gap-2"
             onClick={() => setIsOpen(false)}
           >
             <Save className="w-4 h-4 text-purple-400" />
+            Saved Snippets
+          </Link>
+
+          <Link
+            to="/compiler"
+            className="flex px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 items-center gap-2"
+            onClick={() => setIsOpen(false)}
+          >
+            <Terminal className="w-4 h-4 text-purple-400" />
             New Snippet
           </Link>
-          
-          <button 
+
+          <button
             className="flex w-full px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 items-center gap-2"
             onClick={handleLogout}
           >

@@ -179,14 +179,43 @@ export default function UserProfile() {
             <main className="max-w-6xl mx-auto px-4 py-8">
                 {/* Profile Header */}
                 <div className="bg-gray-800/30 border border-gray-700 rounded-xl overflow-hidden mb-8">
-                    {/* Cover Image - Optional design element */}
+                    {/* Cover Image - Enhanced with text and coding elements */}
                     <div className="h-40 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 relative overflow-hidden">
+                        {/* Decorative code-like elements */}
+                        <div className="absolute inset-0 opacity-30">
+                            <div className="text-xs md:text-sm font-mono text-white/70 p-4 overflow-hidden">
+                                <div>function neoCompiler() {'{'}</div>
+                                <div className="pl-4">const code = writeAwesomeCode();</div>
+                                <div className="pl-4">const result = runCode(code);</div>
+                                <div className="pl-4">return share(result);</div>
+                                <div>{'}'}</div>
+                            </div>
+                        </div>
+                        
+                        {/* Main cover text */}
+                        <div className="absolute bottom-4 right-6 flex items-center">
+                            <div className="flex items-center gap-2 bg-gray-900/60 px-4 py-2 rounded-lg backdrop-blur-sm border border-purple-500/30">
+                                <Code className="w-5 h-5 text-purple-400" />
+                                <span className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                                    Coding with NeoCompiler
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {/* Additional decorative elements - scattered code symbols */}
+                        <div className="absolute top-4 right-8 flex gap-3 text-white/30 font-mono text-lg">
+                            <span>{'{'}</span>
+                            <span>{'<>'}</span>
+                            <span>{'()'}</span>
+                            <span>{'[]'}</span>
+                            <span>{'//'}</span>
+                        </div>
                     </div>
 
                     {/* Profile Info */}
-                    <div className="p-6 md:p-8 relative">
+                    <div className="p-2 md:p-4 relative">
                         {/* Avatar */}
-                        <div className="absolute -top-12 left-8 border-4 border-gray-800 rounded-full overflow-hidden">
+                        <div className="absolute -top-12 left-8  rounded-full overflow-hidden">
                             {user.photoURL && !imageError ? (
                                 <img
                                     src={user.photoURL}

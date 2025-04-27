@@ -25,7 +25,7 @@ export default function NavBar({
 
     return (
         <header className="sticky top-0 z-20 pt-4">
-            <div className="max-w-7xl sm:mx-auto mx-2 bg-gray-900/75 backdrop-blur-md rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-900/15 px-5 py-2 flex items-center justify-between transition-all duration-300 hover:shadow-purple-800/10">
+            <div className="max-w-7xl sm:mx-auto mx-2 bg-gray-900/75 backdrop-blur-md rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-900/15 px-3 py-2 flex items-center justify-between transition-all duration-300 hover:shadow-purple-800/10">
                 {/* Logo and Title */}
                 <div className="flex items-center gap-3">
                     <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">

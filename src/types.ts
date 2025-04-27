@@ -1,3 +1,11 @@
+import { User as FirebaseUser } from 'firebase/auth';
+
+// Extend Firebase User type to include username
+export interface ExtendedUser extends FirebaseUser {
+  username?: string;
+}
+
+// Rest of the existing types
 export interface Language {
   id: string;
   name: string;
