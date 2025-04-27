@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { FaJava, FaPython, FaRust } from "react-icons/fa";
 import { FaGolang } from "react-icons/fa6";
 import { DiRuby } from "react-icons/di";
-import { SiJavascript, SiTypescript, SiCplusplus, SiCoursera , SiGithub } from "react-icons/si";
+import { SiJavascript, SiTypescript, SiCplusplus, SiCoursera, SiGithub } from "react-icons/si";
 
 // Language data
 const supportedLanguages = [
@@ -108,6 +108,7 @@ export default function LandingPage() {
             <HowItWorks />
             <Features />
             <Testimonials />
+            <AIFeatures />
             <UserFeatures />
             <FAQ />
             <Footer />
@@ -282,6 +283,42 @@ function Features() {
                             <p className="text-gray-300 text-center">{desc}</p>
                         </div>
                     ))}
+                </div>
+
+                <h2 className="text-center mt-16 text-2xl font-bold text-white mb-8">
+                    Build Your <span className="text-purple-500">Coding Community</span>
+                </h2>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                    <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
+                        <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
+                            <User className="w-8 h-8 text-purple-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">Custom Profiles</h3>
+                        <p className="text-gray-300">
+                            Create your personalized developer profile with a custom username, bio, profile picture, and social links.
+                        </p>
+                    </div>
+
+                    <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
+                        <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
+                            <Share className="w-8 h-8 text-purple-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">Social Coding</h3>
+                        <p className="text-gray-300">
+                            Share your best work, explore trending code snippets, and connect with like-minded developers.
+                        </p>
+                    </div>
+
+                    <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
+                        <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
+                            <Globe className="w-8 h-8 text-purple-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">Developer Community</h3>
+                        <p className="text-gray-300">
+                            Discover and follow other developers, get inspired by their work, and showcase your coding portfolio.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -490,6 +527,121 @@ function Testimonials() {
     );
 }
 
+// Add a new AIFeatures section between Testimonials and UserFeatures
+function AIFeatures() {
+    return (
+        <section className="py-16 bg-gradient-to-br from-gray-900/70 via-violet-950/10 to-gray-900/70">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                        AI-Powered <span className="text-purple-500">Assistance</span>
+                    </h2>
+                    <div className="w-24 h-1 bg-purple-500 mx-auto rounded-full"></div>
+                    <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+                        Supercharge your coding with our intelligent AI assistant
+                    </p>
+                </div>
+
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                    {/* AI Features */}
+                    <div className="space-y-4">
+                        {[
+                            {
+                                title: "Code Explanation",
+                                description: "Get plain-language explanations of complex code blocks to enhance understanding",
+                                icon: <Bot className="w-6 h-6 text-purple-400" />
+                            },
+                            {
+                                title: "Code Optimization",
+                                description: "Receive suggestions for improving your code efficiency, readability, and performance",
+                                icon: <Rocket className="w-6 h-6 text-purple-400" />
+                            },
+                            {
+                                title: "Debugging Assistance",
+                                description: "Identify and fix errors quickly with intelligent debugging suggestions",
+                                icon: <Bug className="w-6 h-6 text-purple-400" />
+                            },
+                            {
+                                title: "Code Generation",
+                                description: "Generate code snippets based on natural language descriptions of what you want to build",
+                                icon: <Sparkles className="w-6 h-6 text-purple-400" />
+                            }
+                        ].map((feature, idx) => (
+                            <div key={idx} className="flex gap-4 p-4 bg-gray-800/40 rounded-xl hover:bg-gray-800/60 transition-colors border border-purple-900/30 hover:border-purple-500/50">
+                                <div className="bg-purple-900/30 rounded-full p-3 self-start">
+                                    {feature.icon}
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-xl mb-1">{feature.title}</h3>
+                                    <p className="text-gray-300">{feature.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* AI Visualization */}
+                    <div className="bg-gray-800/40 rounded-2xl border border-purple-900/30 p-6 relative overflow-hidden">
+                        {/* Decorative AI pattern in background */}
+                        <div className="absolute inset-0 opacity-5">
+                            <div className="grid grid-cols-10 h-full">
+                                {Array(100).fill(0).map((_, i) => (
+                                    <div key={i} className={`aspect-square ${Math.random() > 0.7 ? 'bg-purple-500' : ''}`}></div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="relative">
+                            <div className="flex items-center mb-6">
+                                <Bot className="w-8 h-8 text-purple-500 mr-3" />
+                                <div>
+                                    <h4 className="font-semibold text-lg">NeoCompiler AI</h4>
+                                    <p className="text-xs text-gray-400">Powered by advanced LLMs</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                {/* User query */}
+                                <div className="bg-gray-700/50 rounded-lg p-3 max-w-[80%]">
+                                    <p className="text-gray-200 text-sm">How can I optimize this function to be more efficient?</p>
+                                </div>
+
+                                {/* AI response */}
+                                <div className="bg-purple-900/40 rounded-lg p-3 ml-auto max-w-[80%] border border-purple-800/30">
+                                    <p className="text-gray-200 text-sm mb-2">Here's an optimized version of your function:</p>
+                                    <div className="bg-gray-900/90 p-2 rounded border border-gray-700 font-mono text-xs text-purple-300 overflow-x-auto">
+                                        <pre>{`function findDuplicates(array) {
+  return [...new Set(
+    array.filter((item, index) => 
+      array.indexOf(item) !== index
+    )
+  )];
+}`}</pre>
+                                    </div>
+                                    <p className="text-gray-300 text-xs mt-2">This uses Set for efficiency and filters in a single pass.</p>
+                                </div>
+
+                                {/* Typing indicator */}
+                                <div className="flex gap-2 items-center">
+                                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-100"></div>
+                                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-200"></div>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 flex justify-center">
+                                <Link to="/compiler" className="px-4 py-2 bg-gradient-to-r from-purple-600 to-violet-700 rounded-lg text-sm font-medium shadow-lg hover:shadow-purple-600/20 flex items-center gap-2 group">
+                                    <span>Try AI Assistant</span>
+                                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
 function UserFeatures() {
     return (
         <section className="py-16 bg-gray-900/50">
@@ -568,7 +720,7 @@ function FAQ() {
                     {[
                         {
                             question: "Is NeoCompiler free to use?",
-                            answer: "Yes, NeoCompiler is completely free for individual use. Create an account to access additional features like saving and sharing code snippets."
+                            answer: "Yes, NeoCompiler is completely free for individual use. Create an account to access additional features like saving and sharing code snippets with public user profiles."
                         },
                         {
                             question: "How secure is my code on NeoCompiler?",
@@ -579,12 +731,16 @@ function FAQ() {
                             answer: "We currently support JavaScript, Python, Java, C++, TypeScript, Go, Rust, Ruby, and C. We're continuously working to add more languages based on user demand."
                         },
                         {
-                            question: "Can I use NeoCompiler offline?",
-                            answer: "NeoCompiler requires an internet connection to compile and run code as it uses cloud-based execution engines. However, the editor works offline for typing code."
+                            question: "What are the new social features in NeoCompiler?",
+                            answer: "We've added public user profiles where you can showcase your coding portfolio, follow other developers, and build a community around your code. Users can now like snippets, view profiles, and discover trending code examples."
                         },
                         {
                             question: "How does the AI assistant work?",
                             answer: "Our AI assistant analyzes your code to provide suggestions, optimizations, and explanations. It can help debug issues, explain concepts, and even generate code snippets based on your needs."
+                        },
+                        {
+                            question: "Can I customize my user profile?",
+                            answer: "Yes! You can add a profile picture, bio, username, and social links to showcase your work. Your public profile displays all your shared code snippets and allows others to discover your work."
                         },
                         {
                             question: "Are there any usage limits?",
