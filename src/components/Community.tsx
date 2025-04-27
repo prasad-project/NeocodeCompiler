@@ -229,7 +229,7 @@ export default function Community() {
                             {/* Snippet Content */}
                             <div className="p-4 flex-1">
                                 {/* Title and Description */}
-                                <h3 className="font-semibold text-lg mb-2 line-clamp-1">{snippet.title}</h3>
+                                <h3 className="font-semibold text-purple-400 text-lg mb-2 line-clamp-1">{snippet.title}</h3>
                                 {snippet.description && (
                                     <p className="text-gray-300 text-sm mb-3 line-clamp-2">{snippet.description}</p>
                                 )}
