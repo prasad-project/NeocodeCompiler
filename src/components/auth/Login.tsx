@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, Mail, Lock, AlertCircle, Github } from 'lucide-react';
-import { loginWithEmail, loginWithGoogle, createUserDocument, db } from '../../services/firebase';
+import { loginWithEmail, loginWithGoogle, loginWithGithub, createUserDocument, db } from '../../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 interface LoginProps {
@@ -69,6 +69,50 @@ export default function Login({ onToggleForm }: LoginProps) {
       }
     } catch (err: any) {
       setError(err.message || 'Failed to login with Google. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const result = await loginWithGithub();
+      
+      // Create user document in Firestore for GitHub sign-in users
+      if (result.user) {
+        // Check if this user already has a username
+        const userDocRef = doc(db, 'users', result.user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        let needsUsernameSetup = false;
+        
+        if (!userDoc.exists()) {
+          // First-time user - create their document
+          await createUserDocument(result.user);
+          needsUsernameSetup = true;
+        } else {
+          // Existing user - check if they have a username
+          const userData = userDoc.data();
+          if (!userData.username) {
+            needsUsernameSetup = true;
+          }
+        }
+        
+        if (needsUsernameSetup) {
+          // Redirect to username setup
+          navigate('/username-setup');
+        } else {
+          // Regular redirect for returning users with username
+          navigate('/compiler');
+        }
+      } else {
+        navigate('/compiler');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to login with GitHub. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -193,7 +237,9 @@ export default function Login({ onToggleForm }: LoginProps) {
         </button>
 
         <button
+          onClick={handleGithubLogin}
           className="py-2.5 px-4 border border-gray-700 rounded-lg flex items-center justify-center gap-2 text-white font-medium hover:bg-gray-800 transition-colors"
+          disabled={isLoading}
         >
           <Github className="w-5 h-5" />
           <span>Login with GitHub</span>

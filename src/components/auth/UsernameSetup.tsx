@@ -212,7 +212,7 @@ export default function UsernameSetup() {
                 ) : isSuccess ? (
                   'Success!'
                 ) : (
-                  'Confirm Username'
+                  'Confirm'
                 )}
               </button>
             </div>

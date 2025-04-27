@@ -7,6 +7,7 @@ import {
   onAuthStateChanged, 
   updateProfile,
   GoogleAuthProvider,
+  GithubAuthProvider,
   signInWithPopup,
   User as FirebaseUser
 } from 'firebase/auth';
@@ -30,6 +31,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 // Authentication helpers
 const registerWithEmail = (email: string, password: string) => {
@@ -42,6 +44,10 @@ const loginWithEmail = (email: string, password: string) => {
 
 const loginWithGoogle = () => {
   return signInWithPopup(auth, googleProvider);
+};
+
+const loginWithGithub = () => {
+  return signInWithPopup(auth, githubProvider);
 };
 
 const logoutUser = () => {
@@ -212,6 +218,7 @@ export {
   registerWithEmail,
   loginWithEmail,
   loginWithGoogle,
+  loginWithGithub,
   logoutUser,
   updateUserProfile,
   createUserDocument,
