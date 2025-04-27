@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { UserPlus, Mail, Lock, AlertCircle, User } from 'lucide-react';
-import { registerWithEmail, updateUserProfile, createUserDocument } from '../../services/firebase';
+import { useState, useEffect } from 'react';
+import { UserPlus, Mail, Lock, AlertCircle, User, AtSign } from 'lucide-react';
+import { registerWithEmail, updateUserProfile, createUserDocument, checkUsernameAvailability } from '../../services/firebase';
 
 interface RegisterProps {
   onToggleForm: () => void;
@@ -9,10 +9,43 @@ interface RegisterProps {
 export default function Register({ onToggleForm }: RegisterProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [usernameChecking, setUsernameChecking] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Check username availability with debounce
+  useEffect(() => {
+    if (!username || username.length < 3) {
+      setUsernameAvailable(null);
+      return;
+    }
+
+    // Validate username format
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setUsernameAvailable(false);
+      return;
+    }
+
+    const checkAvailability = async () => {
+      setUsernameChecking(true);
+      try {
+        const isAvailable = await checkUsernameAvailability(username);
+        setUsernameAvailable(isAvailable);
+      } catch (err) {
+        console.error("Error checking username:", err);
+        setUsernameAvailable(null);
+      } finally {
+        setUsernameChecking(false);
+      }
+    };
+
+    const timeoutId = setTimeout(checkAvailability, 500);
+    return () => clearTimeout(timeoutId);
+  }, [username]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +54,22 @@ export default function Register({ onToggleForm }: RegisterProps) {
     // Validate passwords
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      return;
+    }
+
+    // Validate username
+    if (!username || username.length < 3) {
+      setError('Username must be at least 3 characters long');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setError('Username can only contain letters, numbers, and underscores');
+      return;
+    }
+
+    if (usernameAvailable !== true) {
+      setError('Username is not available. Please choose another.');
       return;
     }
 
@@ -34,8 +83,8 @@ export default function Register({ onToggleForm }: RegisterProps) {
       if (userCredential.user) {
         await updateUserProfile(userCredential.user, name);
         
-        // Create user document in Firestore - this is the key addition
-        await createUserDocument(userCredential.user);
+        // Create user document in Firestore with username
+        await createUserDocument(userCredential.user, username);
       }
 
       // Registration successful - redirect will happen automatically due to auth state change
@@ -78,6 +127,43 @@ export default function Register({ onToggleForm }: RegisterProps) {
             />
             <User className="w-5 h-5 text-gray-500 absolute left-3 top-2.5" />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-400">Username</label>
+          <div className="mt-1 relative">
+            <input
+              type="text"
+              placeholder="Choose a unique username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value.trim())}
+              className={`pl-10 w-full py-2 bg-gray-800 border ${
+                usernameAvailable === true 
+                  ? 'border-green-500' 
+                  : usernameAvailable === false 
+                    ? 'border-red-500' 
+                    : 'border-gray-700'
+              } rounded-lg px-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent`}
+              minLength={3}
+              required
+            />
+            <AtSign className="w-5 h-5 text-gray-500 absolute left-3 top-2.5" />
+            
+            {usernameChecking && (
+              <span className="text-xs text-gray-400 mt-1 absolute right-3 top-3">
+                Checking...
+              </span>
+            )}
+            
+            {!usernameChecking && username.length >= 3 && (
+              <span className={`text-xs ${usernameAvailable ? 'text-green-400' : 'text-red-400'} mt-1 absolute right-3 top-3`}>
+                {usernameAvailable ? 'Available' : 'Unavailable'}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-xs text-gray-500">
+            Username will be used for your public profile (only letters, numbers, and underscores)
+          </p>
         </div>
 
         <div>

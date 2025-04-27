@@ -183,9 +183,12 @@ export default function SharedSnippet() {
               <p className="text-gray-300 text-sm md:text-base">{snippet.description}</p>
             )}
 
-            {/* Creator information with image error handling */}
+            {/* Creator information with image error handling and better fallbacks */}
             <div className="flex items-center mt-3 text-sm text-gray-400">
-              <div className="flex items-center">
+              <Link 
+                to={`/${snippet.creatorUsername || snippet.userId}`}
+                className="flex items-center hover:text-purple-300 transition-colors"
+              >
                 {snippet.creatorPhotoURL && !imageError ? (
                   <img
                     src={snippet.creatorPhotoURL}
@@ -194,12 +197,12 @@ export default function SharedSnippet() {
                     onError={handleImageError}
                   />
                 ) : (
-                  <div className="w-6 h-6 rounded-full bg-purple-600/50 flex items-center justify-center mr-2 text-xs">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center mr-2 text-xs font-medium">
                     {snippet.creatorName ? snippet.creatorName.charAt(0).toUpperCase() : 'U'}
                   </div>
                 )}
-                <span>Created by {snippet.creatorName || 'User'}</span>
-              </div>
+                <span>Created by <span className="font-medium text-gray-300 hover:text-purple-300">{snippet.creatorName || 'Anonymous User'}</span></span>
+              </Link>
             </div>
           </div>
 

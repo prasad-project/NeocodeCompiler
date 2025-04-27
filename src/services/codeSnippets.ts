@@ -1,10 +1,10 @@
 import { db } from './firebase';
-import { collection, doc, addDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, limit, serverTimestamp, DocumentReference, DocumentData, increment, FirestoreError } from 'firebase/firestore';
+import { collection, doc, addDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, limit, serverTimestamp, increment, FirestoreError } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
-import { CodeSnippet, UserProfile } from '../types';
+import { CodeSnippet } from '../types';
 
 // Helper function to get user profile data
-async function getUserProfile(userId: string): Promise<{ displayName: string | null, photoURL: string | null }> {
+async function getUserProfile(userId: string): Promise<{ displayName: string | null, photoURL: string | null, username?: string | null }> {
   try {
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
@@ -13,19 +13,22 @@ async function getUserProfile(userId: string): Promise<{ displayName: string | n
       const userData = userDoc.data();
       return {
         displayName: userData.displayName || null,
-        photoURL: userData.photoURL || null
+        photoURL: userData.photoURL || null,
+        username: userData.username || null
       };
     }
     
     return {
       displayName: null,
-      photoURL: null
+      photoURL: null,
+      username: null
     };
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return {
       displayName: null,
-      photoURL: null
+      photoURL: null,
+      username: null
     };
   }
 }
@@ -184,7 +187,8 @@ export async function getCodeSnippetByShareableLink(shareableLink: string): Prom
       createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
       updatedAt: data.updatedAt?.toDate().toISOString() || new Date().toISOString(),
       creatorName: userProfile.displayName,
-      creatorPhotoURL: userProfile.photoURL
+      creatorPhotoURL: userProfile.photoURL,
+      creatorUsername: userProfile.username || null
     } as CodeSnippet;
   } catch (error) {
     console.error('Error fetching shared snippet:', error);
@@ -396,6 +400,7 @@ export async function getAllPublicSnippets(): Promise<CodeSnippet[]> {
       const userProfile = await getUserProfile(snippet.userId);
       snippet.creatorName = userProfile.displayName;
       snippet.creatorPhotoURL = userProfile.photoURL;
+      snippet.creatorUsername = userProfile.username || null;
     }
     
     return snippets;
@@ -431,6 +436,88 @@ export async function getAllPublicSnippets(): Promise<CodeSnippet[]> {
           const userProfile = await getUserProfile(snippet.userId);
           snippet.creatorName = userProfile.displayName;
           snippet.creatorPhotoURL = userProfile.photoURL;
+          snippet.creatorUsername = userProfile.username || null;
+        }
+        
+        // Client-side sorting as a fallback
+        return snippets.sort((a, b) => 
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+      } catch (fallbackError) {
+        console.error('Fallback query also failed:', fallbackError);
+        throw new Error(`Please create the required Firestore index by visiting the URL in the original error message. Original error: ${firestoreError.message}`);
+      }
+    }
+    
+    throw error;
+  }
+}
+
+// Get public snippets for a specific user
+export async function getPublicSnippetsByUserId(userId: string): Promise<CodeSnippet[]> {
+  try {
+    const snippetsRef = collection(db, 'snippets');
+    const q = query(
+      snippetsRef,
+      where('userId', '==', userId),
+      where('isPublic', '==', true),
+      orderBy('updatedAt', 'desc')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const snippets = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+        updatedAt: data.updatedAt?.toDate().toISOString() || new Date().toISOString()
+      } as CodeSnippet;
+    });
+    
+    // Fetch creator information for all snippets
+    for (const snippet of snippets) {
+      const userProfile = await getUserProfile(snippet.userId);
+      snippet.creatorName = userProfile.displayName;
+      snippet.creatorPhotoURL = userProfile.photoURL;
+      snippet.creatorUsername = userProfile.username || null;
+    }
+    
+    return snippets;
+  } catch (error) {
+    console.error('Error fetching public snippets for user:', error);
+    
+    // Handle missing index error gracefully (same as in getAllPublicSnippets)
+    const firestoreError = error as FirestoreError;
+    if (firestoreError.code === 'failed-precondition' && firestoreError.message.includes('requires an index')) {
+      console.error('Missing Firestore index:', firestoreError.message);
+      
+      // Fallback to a simpler query without ordering
+      try {
+        console.log('Attempting fallback query without ordering...');
+        const fallbackQuery = query(
+          collection(db, 'snippets'),
+          where('userId', '==', userId),
+          where('isPublic', '==', true)
+        );
+        
+        const fallbackSnapshot = await getDocs(fallbackQuery);
+        const snippets = fallbackSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+            updatedAt: data.updatedAt?.toDate().toISOString() || new Date().toISOString()
+          } as CodeSnippet;
+        });
+        
+        // Fetch creator information for all snippets in fallback case
+        for (const snippet of snippets) {
+          const userProfile = await getUserProfile(snippet.userId);
+          snippet.creatorName = userProfile.displayName;
+          snippet.creatorPhotoURL = userProfile.photoURL;
+          snippet.creatorUsername = userProfile.username || null;
         }
         
         // Client-side sorting as a fallback

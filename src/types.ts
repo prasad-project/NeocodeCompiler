@@ -72,6 +72,7 @@ export interface CodeSnippet {
   // Additional creator information
   creatorName?: string | null;
   creatorPhotoURL?: string | null;
+  creatorUsername?: string | null;
 }
 
 export interface CodeComment {

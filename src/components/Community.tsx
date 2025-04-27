@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Search, Eye, Clock, ThumbsUp } from 'lucide-react';
 import { getAllPublicSnippets } from '../services/codeSnippets';
 import { CodeSnippet } from '../types';
-import { useAuth } from '../context/AuthContext';
 import NavBar from './NavBar';
 
 // Language color map for snippet tags (similar to Dashboard)
@@ -20,7 +19,6 @@ const languageColors: Record<string, string> = {
 };
 
 export default function Community() {
-    const { currentUser } = useAuth();
     const [snippets, setSnippets] = useState<CodeSnippet[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -201,8 +199,12 @@ export default function Community() {
                         >
                             {/* Snippet Header with Language Indicator and Creator Info */}
                             <div className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-                                {/* Creator Info - Moved to header */}
-                                <div className="flex items-center gap-2 text-xs text-gray-400">
+                                {/* Creator Info - Made clickable to redirect to user profile */}
+                                <Link 
+                                    to={`/${snippet.creatorUsername || snippet.userId}`} 
+                                    className="flex items-center gap-2 text-xs text-gray-400 hover:text-purple-300 transition-colors"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     {snippet.creatorPhotoURL && !imageErrors[snippet.id] ? (
                                         <img
                                             src={snippet.creatorPhotoURL}
@@ -215,8 +217,8 @@ export default function Community() {
                                             {snippet.creatorName ? snippet.creatorName.charAt(0).toUpperCase() : 'U'}
                                         </div>
                                     )}
-                                    <span className="hidden sm:inline">{snippet.creatorName || 'User'}</span>
-                                </div>
+                                    <span className="hidden sm:inline text-gray-300">{snippet.creatorName || 'Anonymous User'}</span>
+                                </Link>
 
                                 <div className="flex items-center gap-2">
                                     <span className={`w-3 h-3 rounded-full ${languageColors[snippet.language] || 'bg-gray-500'}`}></span>

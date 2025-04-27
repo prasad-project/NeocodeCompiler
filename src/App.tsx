@@ -8,6 +8,8 @@ import SnippetDetail from './components/SnippetDetail';
 import SharedSnippet from './components/SharedSnippet';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Community from './components/Community';
+import UserProfile from './components/UserProfile';
+import UsernameSetup from './components/auth/UsernameSetup';
 
 export default function App() {
   return (
@@ -19,6 +21,16 @@ export default function App() {
           <Route path="/compiler/:linkId" element={<Compiler />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/community" element={<Community />} />
+          
+          {/* User profile page with cleaner route (just /:username) */}
+          <Route path="/:username" element={<UserProfile />} />
+          
+          {/* Username setup for new users */}
+          <Route path="/username-setup" element={
+            <ProtectedRoute>
+              <UsernameSetup />
+            </ProtectedRoute>
+          } />
           
           {/* Protected routes (require authentication) */}
           <Route path="/dashboard" element={

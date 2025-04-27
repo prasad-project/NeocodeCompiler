@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { getUserCodeSnippets } from '../services/codeSnippets';
 import { CodeSnippet } from '../types';
 import NavBar from './NavBar';
+import { db } from '../services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 // Language color map for snippet tags
 const languageColors: Record<string, string> = {
@@ -34,6 +36,35 @@ export default function Dashboard() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>(
         () => (localStorage.getItem('dashboard-view-mode') as 'grid' | 'list') || 'grid'
     );
+    const [username, setUsername] = useState<string>('');
+
+    // Fetch username from Firestore
+    useEffect(() => {
+        const fetchUsername = async () => {
+            if (!currentUser) return;
+            
+            try {
+                const userRef = doc(db, 'users', currentUser.uid);
+                const userDoc = await getDoc(userRef);
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.username) {
+                        setUsername(userData.username);
+                    } else {
+                        // Fallback to a simplified display name if username doesn't exist
+                        setUsername(currentUser.displayName?.toLowerCase().replace(/\s+/g, '') || 'user');
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching username:', err);
+                // Fallback to display name in case of error
+                setUsername(currentUser.displayName?.toLowerCase().replace(/\s+/g, '') || 'user');
+            }
+        };
+        
+        fetchUsername();
+    }, [currentUser]);
 
     // Load user snippets
     useEffect(() => {
@@ -151,7 +182,16 @@ export default function Dashboard() {
 
             <main className="flex-1 max-w-7xl mx-auto w-full p-6">
                 <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl sm:text-4xl font-bold">My Code <span className="text-purple-500">Snippets</span></h2>
+                    <div>
+                        <h2 className="text-2xl sm:text-4xl font-bold">My Code <span className="text-purple-500">Snippets</span></h2>
+                        {currentUser && (
+                            <div className="text-gray-400 text-sm mt-1 flex items-center">
+                                <span>@{username}</span>
+                                <span className="mx-2">•</span>
+                                <span>{snippets.length} snippets total</span>
+                            </div>
+                        )}
+                    </div>
                     <Link
                         to="/compiler"
                         className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors"

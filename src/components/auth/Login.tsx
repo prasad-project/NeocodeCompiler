@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, Mail, Lock, AlertCircle, Github } from 'lucide-react';
-import { loginWithEmail, loginWithGoogle, createUserDocument } from '../../services/firebase';
+import { loginWithEmail, loginWithGoogle, createUserDocument, db } from '../../services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 interface LoginProps {
   onToggleForm: () => void;
@@ -38,11 +39,34 @@ export default function Login({ onToggleForm }: LoginProps) {
       
       // Create user document in Firestore for Google sign-in users
       if (result.user) {
-        // Check if this might be a first-time Google sign-in
-        await createUserDocument(result.user);
+        // Check if this user already has a username
+        const userDocRef = doc(db, 'users', result.user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        let needsUsernameSetup = false;
+        
+        if (!userDoc.exists()) {
+          // First-time user - create their document
+          await createUserDocument(result.user);
+          needsUsernameSetup = true;
+        } else {
+          // Existing user - check if they have a username
+          const userData = userDoc.data();
+          if (!userData.username) {
+            needsUsernameSetup = true;
+          }
+        }
+        
+        if (needsUsernameSetup) {
+          // Redirect to username setup
+          navigate('/username-setup');
+        } else {
+          // Regular redirect for returning users with username
+          navigate('/compiler');
+        }
+      } else {
+        navigate('/compiler');
       }
-      
-      navigate('/compiler');
     } catch (err: any) {
       setError(err.message || 'Failed to login with Google. Please try again.');
     } finally {
