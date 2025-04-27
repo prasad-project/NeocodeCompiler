@@ -95,6 +95,15 @@ export default function ProfileMenu() {
           </div>
 
           {/* Menu items */}
+          
+          <Link
+            to="/dashboard"
+            className="flex px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 items-center gap-2"
+            onClick={() => setIsOpen(false)}
+          >
+            <Save className="w-4 h-4 text-purple-400" />
+            Saved Snippets
+          </Link>
 
           <Link
             to={`/${currentUser.username || currentUser.uid}`}
@@ -103,15 +112,6 @@ export default function ProfileMenu() {
           >
             <User className="w-4 h-4 text-purple-400" />
             Public Profile
-          </Link>
-
-          <Link
-            to="/dashboard"
-            className="flex px-4 py-2 text-sm text-gray-200 hover:bg-gray-700 items-center gap-2"
-            onClick={() => setIsOpen(false)}
-          >
-            <Save className="w-4 h-4 text-purple-400" />
-            Saved Snippets
           </Link>
 
           <Link
