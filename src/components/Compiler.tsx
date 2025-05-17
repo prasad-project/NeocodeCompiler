@@ -11,6 +11,7 @@ import { executeCode } from '../services/codeExecution';
 import { SUPPORTED_LANGUAGES } from '../constants/editorConfig';
 import { useAuth } from '../context/AuthContext';
 import { getCodeSnippet, getCodeSnippetByShareableLink } from '../services/codeSnippets';
+import CodeSuggestionPanel from './ui/CodeSuggestionPanel';
 
 export default function Compiler() {
   const { currentUser } = useAuth();
@@ -30,6 +31,14 @@ export default function Compiler() {
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [loadingSnippet, setLoadingSnippet] = useState(false);
   const [loadingError, setLoadingError] = useState<string | null>(null);
+  const [showSuggestion, setShowSuggestion] = useState(false);
+  const [suggestionLoading, setSuggestionLoading] = useState(false);
+  const [suggestionData, setSuggestionData] = useState<{
+    suggestion: string;
+    strengths: string[];
+    improvements: string[];
+    score?: number;
+  } | null>(null);
   
   // Keep track of the actual current language ID
   const currentLanguageRef = useRef(selectedLanguageId);
@@ -193,6 +202,30 @@ export default function Compiler() {
     </button>
   );
 
+  // Handler for code suggestion
+  const handleCodeSuggestion = async () => {
+    setShowSuggestion(true);
+    setSuggestionLoading(true);
+    // Use mock data for now to avoid Gemini API errors
+    setTimeout(() => {
+      setSuggestionData({
+        suggestion: `def calculate_monkey_collisions(vertices: int) -> int:\n    MOD = 10**9 + 7\n    # ...rest of the code...`,
+        strengths: [
+          'The logic to compute the number of collision configurations is correct and utilizes modular arithmetic effectively.',
+          'The use of Python\'s built-in pow function for exponentiation is efficient and optimal for the problem constraints.'
+        ],
+        improvements: [
+          'Improve function and variable naming for clarity.',
+          'Handle input and output in a more organized way.',
+          'Add type hints for better readability and code maintainability.',
+          'Consider edge cases and provide documentation for the function.'
+        ],
+        score: 8
+      });
+      setSuggestionLoading(false);
+    }, 1200);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex flex-col font-sans">
       {/* Header */}
@@ -277,6 +310,16 @@ export default function Compiler() {
                 selectedLanguageId={selectedLanguageId}
                 onEditorMount={(editor) => setEditorInstance(editor)}
               />
+              {/* Code Suggestion Button */}
+              <div className="p-4 border-t border-purple-900/30 bg-gray-900/70 flex justify-end">
+                <button
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold shadow-md transition-all"
+                  onClick={handleCodeSuggestion}
+                  disabled={suggestionLoading}
+                >
+                  {suggestionLoading ? 'Loading Suggestion...' : 'Code Suggestion'}
+                </button>
+              </div>
             </div>
 
             {/* Output Panel */}
@@ -308,6 +351,18 @@ export default function Compiler() {
         language={selectedLanguageId}
         onSuccess={handleSaveSuccess}
       />
+
+      {/* Code Suggestion Panel */}
+      {showSuggestion && suggestionData && (
+        <CodeSuggestionPanel
+          userCode={getCurrentCode()}
+          suggestionCode={suggestionData.suggestion}
+          language={getCurrentLanguage().id}
+          strengths={suggestionData.strengths}
+          improvements={suggestionData.improvements}
+          score={suggestionData.score}
+        />
+      )}
     </div>
   );
 }

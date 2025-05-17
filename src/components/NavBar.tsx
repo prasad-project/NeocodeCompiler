@@ -1,18 +1,16 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Code2, LogIn, Globe, Terminal } from 'lucide-react';
+import { Code2, LogIn, Terminal } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ProfileMenu from './ProfileMenu';
 
 type NavBarProps = {
     showCompilerButton?: boolean;
-    showCommunityButton?: boolean;
     additionalButtons?: React.ReactNode;
 };
 
 export default function NavBar({
     showCompilerButton = true,
-    showCommunityButton = true,
     additionalButtons
 }: NavBarProps) {
     const { currentUser } = useAuth();
@@ -21,7 +19,6 @@ export default function NavBar({
     // Determine current page based on location path
     const isHomePage = location.pathname === '/';
     const isCompilerPage = location.pathname === '/compiler';
-    const isCommunityPage = location.pathname === '/community';
 
     return (
         <header className="sticky top-0 z-20 pt-4">
@@ -39,20 +36,7 @@ export default function NavBar({
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex items-center gap-3 sm:gap-4">
-                    
-                    {/* Community button */}
-                    {showCommunityButton && !isCommunityPage && (
-                        <Link
-                            to="/community"
-                            className="flex items-center gap-2 p-2 bg-gray-800/60 hover:bg-gray-700/70 rounded-xl text-gray-200 border border-gray-700/30 shadow-sm hover:shadow transition-all"
-                            aria-label="Community"
-                        >
-                            <Globe className="w-6 h-6" />
-                            <span className="hidden sm:inline">Community</span>
-                        </Link>
-                    )}
-
+                <nav className="flex items-center gap-3">
                     {/* Additional buttons passed from parent component */}
                     {additionalButtons}
 

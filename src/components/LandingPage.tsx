@@ -291,10 +291,10 @@ function Features() {
                 </div>
 
                 <h2 className="text-center mt-16 text-2xl font-bold text-white mb-8">
-                    Build Your <span className="text-purple-500">Coding Community</span>
+                    Build Your <span className="text-purple-500">Coding Portfolio</span>
                 </h2>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 gap-8">
                     <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
                         <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
                             <User className="w-8 h-8 text-purple-400" />
@@ -309,19 +309,9 @@ function Features() {
                         <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
                             <Share className="w-8 h-8 text-purple-400" />
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">Social Coding</h3>
+                        <h3 className="text-xl font-semibold mb-2">Share Your Code</h3>
                         <p className="text-gray-300">
-                            Share your best work, explore trending code snippets, and connect with like-minded developers.
-                        </p>
-                    </div>
-
-                    <div className="p-6 bg-gray-800/50 rounded-xl border border-purple-900/30 hover:border-purple-500/50 transition-all flex flex-col items-center text-center">
-                        <div className="w-16 h-16 flex items-center justify-center bg-purple-900/30 rounded-full mb-4">
-                            <Globe className="w-8 h-8 text-purple-400" />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-2">Developer Community</h3>
-                        <p className="text-gray-300">
-                            Discover and follow other developers, get inspired by their work, and showcase your coding portfolio.
+                            Save and share your code snippets with others through unique shareable links.
                         </p>
                     </div>
                 </div>
@@ -772,8 +762,7 @@ function FAQ() {
                                 </button>
 
                                 <div
-                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100 mt-3' : 'max-h-0 opacity-0'
-                                        }`}
+                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100 mt-3' : 'max-h-0 opacity-0'}`}
                                 >
                                     <div className="pl-7 text-gray-300">
                                         <p>{item.answer}</p>
@@ -829,10 +818,6 @@ function Footer() {
                                     <Terminal className="w-4 h-4" />
                                     <span>Compiler</span>
                                 </Link>
-                                <Link to="/community" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
-                                    <Globe className="w-4 h-4" />
-                                    <span>Community</span>
-                                </Link>
                                 <Link to="/auth" className="text-gray-300 hover:text-purple-400 transition-colors flex items-center gap-2">
                                     <User className="w-4 h-4" />
                                     <span>Login</span>
@@ -847,7 +832,7 @@ function Footer() {
                         {/* Connect */}
                         <div className="space-y-4">
                             <h4 className="font-semibold text-gray-300 text-center mb-4">
-                                💜 Developed by <a href="https://deepakmodi.vercel.app" className="text-purple-400 hover:text-purple-500 transition-colors">Deepak Modi</a>
+                                💜 Developed by <span className="text-purple-400">Code Ranger</span>
                             </h4>
                             <div className="flex flex-col gap-2">
                                 <a

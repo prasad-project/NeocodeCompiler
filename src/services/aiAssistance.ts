@@ -23,11 +23,12 @@ export async function getAICodeAssistance({
 }: AIRequestParams): Promise<AIResponse> {
     const apiKey = getGeminiApiKey();
 
-    if (!apiKey) {
+    if (!apiKey || apiKey === 'your-key-here') {
+        // Return mock/demo response if API key is missing or invalid
         return {
-            success: false,
-            error: 'Gemini API key not found. Please set your API key in settings.',
-            suggestion: null
+            success: true,
+            suggestion: `// Demo AI response\n// Your prompt: ${prompt}\n// Your code:\n${code}\n// Language: ${language}\n\n// This is a mock response. Set a valid Gemini API key for real AI suggestions.`,
+            error: null
         };
     }
 

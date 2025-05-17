@@ -7,7 +7,6 @@ import Dashboard from './components/Dashboard';
 import SnippetDetail from './components/SnippetDetail';
 import SharedSnippet from './components/SharedSnippet';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import Community from './components/Community';
 import UserProfile from './components/UserProfile';
 import UsernameSetup from './components/auth/UsernameSetup';
 
@@ -20,7 +19,6 @@ export default function App() {
           <Route path="/compiler" element={<Compiler />} />
           <Route path="/compiler/:linkId" element={<Compiler />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/community" element={<Community />} />
           
           {/* User profile page with cleaner route (just /:username) */}
           <Route path="/:username" element={<UserProfile />} />
@@ -50,6 +48,8 @@ export default function App() {
           
           {/* Redirect any unknown paths to the landing page */}
           <Route path="*" element={<Navigate to="/" replace />} />
+          
+          <Route path="/codesuggestion" element={<Compiler />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
