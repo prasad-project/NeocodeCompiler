@@ -1,5 +1,8 @@
 # NeoCompiler
 
+![Screenshot 2025-05-18 171351](https://github.com/user-attachments/assets/f3a2283b-a21b-41d4-87ca-c4bc964a661e)
+
+
 A modern, AI-powered online code compiler and editor that supports multiple programming languages and provides intelligent code assistance.
 
 ## Features
@@ -39,7 +42,7 @@ npm install
 npm run dev
 ```
 
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
+4. Open [https://neocode-compiler.vercel.app/] in your browser.
 
 ## Contributing
 
